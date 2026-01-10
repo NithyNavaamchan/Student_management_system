@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grade Assignment</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                DEFAULT: "#4F46E5", // Indigo-600
+                hover: "#4338CA", // Indigo-700
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <style>
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+      }
+      [x-cloak] {
+        display: none !important;
+      }
+
+      /* Make the grade input box smaller */
+      .grade-input {
+        max-width: 80px;
+      }
+      .grade-input:disabled {
+        background: #f3f4f6;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body class="font-sans bg-gray-50">
+    <div
+      x-data="{ sidebarOpen: window.innerWidth > 1024, profileOpen: false, notificationOpen: false }"
+      class="flex h-screen bg-gray-100"
+    >
+      <aside
+        class="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-white border-r transition-transform duration-300 transform"
+        :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+      >
+        <div class="h-24 flex items-center justify-center border-b">
+          <div class="flex flex-col items-center text-center p-4">
+            <img
+              class="h-14 w-14 rounded-full"
+              src="https://placehold.co/100x100/C7D2FE/4338CA?text=MD"
+              alt="Mr. David"
+            />
+            <h3 class="text-sm font-semibold text-gray-800 mt-2">Mr. David</h3>
+            <span class="text-xs text-gray-500">Teacher ID: TCH10023</span>
+          </div>
+        </div>
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="py-4">
+            <li class="px-4">
+              <a
+                href="teacher_dashboard.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2.5a.5.5 0 01.5-.5h3a.5.5 0 01.5.5V17a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Dashboard</span>
+              </a>
+            </li>
+
+            <li class="px-4 mt-2">
+              <a
+                href="teacher_assignments.html"
+                class="flex items-center px-4 py-3 bg-primary text-white rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm3 0a1 1 0 000 2h.01a1 1 0 100-2H13z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Assignments</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="teacher_exams.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M12.5 3.25a.75.75 0 01.75.75v.5c0 .414.336.75.75.75h.5a.75.75 0 01.75.75v10a.75.75 0 01-.75.75H5.75a.75.75 0 01-.75-.75V5.75a.75.75 0 01.75-.75h.5a.75.75 0 01.75-.75v-.5a.75.75 0 01.75-.75h5zM3 5.75A2.25 2.25 0 015.25 3.5h.5a2.25 2.25 0 012.25-2.25h4a2.25 2.25 0 012.25 2.25h.5A2.25 2.25 0 0117 5.75v10A2.25 2.25 0 0114.75 18H5.25A2.25 2.25 0 013 15.75V5.75z"
+                    clip-rule="evenodd"
+                  />
+                  <path
+                    d="M7 8.25a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 017 8.25zM7 11.25a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 017 11.25zM7 14.25a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 017 14.25z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exams</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="teacher_resources.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3.49 2.22A2.25 2.25 0 001.25 4.5v11A2.25 2.25 0 003.5 17.75h13A2.25 2.25 0 0018.75 15.5v-11A2.25 2.25 0 0016.5 2.22H3.49zM2.75 4.5c0-.69.56-1.25 1.25-1.25h12c.69 0 1.25.56 1.25 1.25v11c0 .69-.56 1.25-1.25 1.25h-12c-.69 0-1.25-.56-1.25-1.25v-11z"
+                    clip-rule="evenodd"
+                  />
+                  <path
+                    d="M10 4.25a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5a.75.75 0 01.75-.75z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 8.854l-3.03 3.03a.75.75 0 001.06 1.06L10 10.97l2.97 2.97a.75.75 0 001.06-1.06L11.061 8.854 10 7.793l-1.061 1.06z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Resources</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="teacher_timetable.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Timetable</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <div
+        class="flex-1 flex flex-col overflow-hidden transition-all duration-300"
+        :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'"
+      >
+        <header
+          class="h-16 flex items-center justify-between bg-white border-b px-6"
+        >
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="text-gray-600 hover:text-gray-800"
+          >
+            <svg
+              class="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+          <div class="hidden md:flex items-center">
+            <h2 class="ml-2 text-lg font-semibold text-gray-800">
+              Student Management System
+            </h2>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="relative" x-data="{ open: false }">
+              <button
+                @click="open = !open; profileOpen = false"
+                class="text-gray-600 hover:text-gray-800 relative"
+              >
+                <svg
+                  class="w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.017 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                  />
+                </svg>
+                <span
+                  class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"
+                ></span>
+              </button>
+            </div>
+            <div class="relative" x-data="{ open: false }">
+              <button
+                @click="open = !open; notificationOpen = false"
+                class="flex items-center space-x-2"
+              >
+                <span class="text-sm font-medium text-gray-800 hidden sm:block"
+                  >Mr. David</span
+                >
+                <svg
+                  class="w-4 h-4 text-gray-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+              <div
+                x-show="open"
+                @click.away="open = false"
+                x-cloak
+                x-transition
+                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl overflow-hidden z-10"
+              >
+                <a
+                  href="teacher_profile.html"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >My Profile</a
+                >
+                <a
+                  href="#logout"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >Logout</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main
+          class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 sm:p-6"
+          x-data="gradingPage()"
+        >
+          <div class="max-w-7xl mx-auto">
+            <div class="mb-5">
+              <a
+                href="teacher_assignments.html"
+                class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-800 mb-2"
+              >
+                <svg
+                  class="w-5 h-5 mr-1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M12.79 5.23a.75.75 0 010 1.06L9.06 10l3.73 3.71a.75.75 0 11-1.06 1.06l-4.25-4.25a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Back to Assignments
+              </a>
+              <div class="flex items-center gap-3">
+                <h1
+                  class="text-2xl font-semibold text-gray-900"
+                  x-text="assignment.title"
+                ></h1>
+                <span
+                  x-show="isGradedView"
+                  class="text-sm font-medium px-3 py-0.5 rounded-full bg-blue-100 text-blue-800"
+                  x-cloak
+                  >View Only</span
+                >
+              </div>
+              <p
+                class="text-sm text-gray-600"
+                x-text="`Due: ${assignment.dueDate} • ${assignment.class}`"
+              ></p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div class="bg-white p-5 rounded-lg shadow-sm">
+                <div class="text-sm font-medium text-gray-500 uppercase">
+                  Needs Grading
+                </div>
+                <div
+                  class="text-3xl font-semibold text-yellow-600"
+                  x-text="stats.needsGrading"
+                ></div>
+              </div>
+              <div class="bg-white p-5 rounded-lg shadow-sm">
+                <div class="text-sm font-medium text-gray-500 uppercase">
+                  Graded
+                </div>
+                <div
+                  class="text-3xl font-semibold text-green-600"
+                  x-text="stats.graded"
+                ></div>
+              </div>
+              <div class="bg-white p-5 rounded-lg shadow-sm">
+                <div class="text-sm font-medium text-gray-500 uppercase">
+                  Not Submitted
+                </div>
+                <div
+                  class="text-3xl font-semibold text-gray-900"
+                  x-text="stats.notSubmitted"
+                ></div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm">
+              <div
+                class="sticky top-0 bg-white z-10 p-4 border-b border-gray-200"
+              >
+                <div
+                  class="flex flex-col sm:flex-row justify-between items-center gap-4"
+                >
+                  <div class="flex-shrink-0">
+                    <nav class="flex space-x-2" aria-label="Tabs">
+                      <button
+                        @click="filter = 'all'"
+                        :class="filter === 'all' ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-100'"
+                        class="px-3 py-2 font-medium text-sm rounded-md"
+                      >
+                        All Students
+                        <span
+                          class="ml-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800"
+                          x-text="students.length"
+                        ></span>
+                      </button>
+                      <button
+                        @click="filter = 'needs-grading'"
+                        :class="filter === 'needs-grading' ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-100'"
+                        class="px-3 py-2 font-medium text-sm rounded-md"
+                      >
+                        Needs Grading
+                        <span
+                          class="ml-1.5 px-2 py-0.5 rounded-full text-xs font-medium"
+                          :class="filter === 'needs-grading' ? 'bg-white/30' : 'bg-yellow-100 text-yellow-800'"
+                          x-text="stats.needsGrading"
+                        ></span>
+                      </button>
+                      <button
+                        @click="filter = 'not-submitted'"
+                        :class="filter === 'not-submitted' ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-100'"
+                        class="px-3 py-2 font-medium text-sm rounded-md"
+                      >
+                        Not Submitted
+                        <span
+                          class="ml-1.5 px-2 py-0.5 rounded-full text-xs font-medium"
+                          :class="filter === 'not-submitted' ? 'bg-white/30' : 'bg-gray-200 text-gray-800'"
+                          x-text="stats.notSubmitted"
+                        ></span>
+                      </button>
+                    </nav>
+                  </div>
+
+                  <div class="flex-shrink-0">
+                    <button
+                      x-show="!isGradedView"
+                      type="button"
+                      @click="saveGrades()"
+                      class="w-full sm:w-auto flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                      x-cloak
+                    >
+                      Save All Grades
+                    </button>
+                    <button
+                      x-show="isGradedView"
+                      type="button"
+                      class="w-full sm:w-auto flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white"
+                      disabled
+                      x-cloak
+                    >
+                      All Grades Saved
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Student Name
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Status
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Submission
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Grade
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <template
+                      x-for="(student, index) in filteredStudents"
+                      :key="student.id"
+                    >
+                      <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                              <img
+                                class="h-10 w-10 rounded-full"
+                                :src="student.avatar"
+                                alt=""
+                              />
+                            </div>
+                            <div class="ml-4">
+                              <div
+                                class="text-sm font-medium text-gray-900"
+                                x-text="student.name"
+                              ></div>
+                              <div
+                                class="text-sm text-gray-500"
+                                x-text="`ID: ${student.id}`"
+                              ></div>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <span
+                            class="text-xs font-semibold px-2.5 py-0.5 rounded-full"
+                            :class="{
+                                  'bg-green-100 text-green-800': student.status === 'Graded',
+                                  'bg-yellow-100 text-yellow-800': student.status === 'Needs Grading',
+                                  'bg-red-100 text-red-800': student.status === 'Late',
+                                  'bg-gray-100 text-gray-800': student.status === 'Not Submitted'
+                                }"
+                            x-text="student.status"
+                          >
+                          </span>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                          <template x-if="student.submissionFile">
+                            <button
+                              @click="viewSubmission(student, findStudentIndex(student.id))"
+                              type="button"
+                              class="text-primary hover:text-primary-hover hover:underline"
+                              x-text="student.submissionFile"
+                            ></button>
+                          </template>
+                          <template x-if="!student.submissionFile">
+                            <span class="text-gray-500 italic"
+                              >No Submission</span
+                            >
+                          </template>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div class="flex items-center space-x-2">
+                            <input
+                              type="number"
+                              class="grade-input rounded-md border-gray-300 shadow-sm sm:text-sm"
+                              :class="{ 'focus:border-primary focus:ring-primary': !isGradedView }"
+                              :disabled="student.status === 'Not Submitted' || isGradedView"
+                              x-model="student.grade"
+                            />
+                            <span
+                              class="text-sm text-gray-500"
+                              x-text="`/ ${assignment.points}`"
+                            ></span>
+                          </div>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div
+            x-show="$store.submissionModalOpen"
+            @keydown.escape.window="$store.submissionModalOpen = false"
+            class="fixed inset-0 z-50 overflow-y-auto"
+            x-cloak
+          >
+            <div
+              class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+            >
+              <div
+                x-show="$store.submissionModalOpen"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                @click="$store.submissionModalOpen = false"
+                class="fixed inset-0 transition-opacity bg-gray-500/75"
+              ></div>
+
+              <div
+                x-show="$store.submissionModalOpen"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                class="relative inline-block w-full max-w-4xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg"
+              >
+                <div class="flex items-center justify-between p-4 border-b">
+                  <div>
+                    <h3
+                      class="text-lg font-medium text-gray-900"
+                      x-text="currentStudent.name"
+                    ></h3>
+                    <p
+                      class="text-sm text-gray-500"
+                      x-text="currentStudent.submissionFile"
+                    ></p>
+                  </div>
+                  <button
+                    @click="$store.submissionModalOpen = false"
+                    class="text-gray-400 hover:text-gray-600"
+                  >
+                    <svg
+                      class="w-6 h-6"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                <div
+                  class="p-4 bg-gray-100"
+                  style="height: 60vh; overflow-y: auto"
+                >
+                  <img
+                    :src="currentStudent.submissionContentUrl"
+                    alt="Student Submission"
+                    class="max-w-full mx-auto"
+                    onerror="this.src='https://placehold.co/800x1100/FFFFFF/000000?text=Error+Loading+Document'"
+                  />
+                </div>
+
+                <div
+                  class="flex flex-col sm:flex-row justify-between items-center p-4 bg-gray-50 border-t"
+                >
+                  <div class="flex items-center space-x-2">
+                    <label
+                      for="modal-grade"
+                      class="text-sm font-medium text-gray-700"
+                      >Grade:</label
+                    >
+                    <input
+                      type="number"
+                      id="modal-grade"
+                      class="grade-input rounded-md border-gray-300 shadow-sm sm:text-sm"
+                      :class="{ 'focus:border-primary focus:ring-primary': !isGradedView }"
+                      :disabled="isGradedView"
+                      x-model="currentStudent.grade"
+                    />
+                    <span
+                      class="text-sm text-gray-500"
+                      x-text="`/ ${assignment.points}`"
+                    ></span>
+                  </div>
+
+                  <div
+                    x-show="!isGradedView"
+                    class="flex space-x-3 mt-4 sm:mt-0"
+                    x-cloak
+                  >
+                    <button
+                      @click="saveGradeAndNext()"
+                      type="button"
+                      class="flex-1 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover"
+                    >
+                      Save & Next
+                    </button>
+                    <button
+                      @click="saveGradeAndClose()"
+                      type="button"
+                      class="flex-1 justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      Save & Close
+                    </button>
+                  </div>
+
+                  <div x-show="isGradedView" class="mt-4 sm:mt-0" x-cloak>
+                    <span class="text-sm font-medium text-green-700"
+                      >Grade has been saved.</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      // NEW: Use Alpine.store to manage global modal state
+      document.addEventListener("alpine:init", () => {
+        Alpine.store("submissionModalOpen", false);
+
+        Alpine.data("gradingPage", () => ({
+          // --- MOCK DATA ---
+          filter: "needs-grading",
+          isGradedView: false,
+          assignment: {},
+          currentStudent: {},
+          currentStudentIndex: -1,
+          students: [],
+
+          init() {
+            // Fetch and set up mock data
+            const urlParams = new URLSearchParams(window.location.search);
+            const assignmentId = urlParams.get("id") || "1";
+
+            const allAssignments = {
+              1: {
+                id: 1,
+                title: "Calculus Problem Set",
+                class: "Class 10-A",
+                dueDate: "Dec 10, 2023",
+                points: 100,
+                status: "Needs Grading",
+              },
+              2: {
+                id: 2,
+                title: "Lab Report: Optics",
+                class: "Class 11-A",
+                dueDate: "Dec 08, 2023",
+                points: 100,
+                status: "Graded",
+              },
+              default: {
+                id: 0,
+                title: "Unknown Assignment",
+                class: "N/A",
+                dueDate: "N/A",
+                points: 100,
+                status: "Needs Grading",
+              },
+            };
+
+            const allStudents = {
+              1: [
+                {
+                  id: "STU2023456",
+                  name: "Emily Johnson",
+                  avatar: "https://placehold.co/100x100/E2E8F0/4A5568?text=EJ",
+                  status: "Needs Grading",
+                  submissionFile: "calculus_set_1.pdf",
+                  grade: null,
+                  submissionContentUrl:
+                    "https://placehold.co/800x1100/FFFFFF/000000?text=Student+Submission+Page+1",
+                },
+                {
+                  id: "STU2023123",
+                  name: "Michael Brown",
+                  avatar: "https://placehold.co/100x100/C6F6D5/22543D?text=MB",
+                  status: "Graded",
+                  submissionFile: "calc_problem_set.pdf",
+                  grade: 92,
+                  submissionContentUrl:
+                    "https://placehold.co/800x1100/FFFFFF/000000?text=Student+Submission+Page+2",
+                },
+                {
+                  id: "STU2023124",
+                  name: "Sarah Davis",
+                  avatar: "https://placehold.co/100x100/FEEBC8/9C4221?text=SD",
+                  status: "Needs Grading",
+                  submissionFile: "problems.pdf",
+                  grade: null,
+                  submissionContentUrl:
+                    "https://placehold.co/800x1100/FFFFFF/000000?text=Student+Submission+Page+3",
+                },
+                {
+                  id: "STU2023125",
+                  name: "David Lee",
+                  avatar: "https://placehold.co/100x100/C4F1F9/0B697F?text=DL",
+                  status: "Late",
+                  submissionFile: "late_submission.pdf",
+                  grade: null,
+                  submissionContentUrl:
+                    "https://placehold.co/800x1100/FFFFFF/000000?text=Student+Submission+Page+4",
+                },
+                {
+                  id: "STU2023126",
+                  name: "James Wilson",
+                  avatar: "https://placehold.co/100x100/E9D8FD/5A3E8A?text=JW",
+                  status: "Not Submitted",
+                  submissionFile: null,
+                  grade: null,
+                  submissionContentUrl: null,
+                },
+              ],
+              2: [
+                {
+                  id: "STU2023127",
+                  name: "Sophia Miller",
+                  avatar: "https://placehold.co/100x100/FEE2E2/991B1B?text=SM",
+                  status: "Graded",
+                  submissionFile: "calculus.pdf",
+                  grade: 88,
+                  submissionContentUrl:
+                    "https://placehold.co/800x1100/FFFFFF/000000?text=Student+Submission+Page+5",
+                },
+                {
+                  id: "STU2023128",
+                  name: "Daniel Garcia",
+                  avatar: "https://placehold.co/100x100/D1FAE5/065F46?text=DG",
+                  status: "Graded",
+                  submissionFile: "calc_set.pdf",
+                  grade: 95,
+                  submissionContentUrl:
+                    "https://placehold.co/800x1100/FFFFFF/000000?text=Student+Submission+Page+6",
+                },
+              ],
+              default: [],
+            };
+            // --- END MOCK DATA ---
+
+            const currentAssignment =
+              allAssignments[assignmentId] || allAssignments["default"];
+
+            this.assignment = currentAssignment;
+            this.isGradedView = currentAssignment.status === "Graded";
+            this.filter =
+              currentAssignment.status === "Graded" ? "all" : "needs-grading";
+            this.students = JSON.parse(
+              JSON.stringify(
+                allStudents[assignmentId] || allStudents["default"]
+              )
+            );
+          },
+
+          // Recalculate stats when student data changes
+          get stats() {
+            return {
+              needsGrading: this.students.filter(
+                (s) => s.status === "Needs Grading" || s.status === "Late"
+              ).length,
+              graded: this.students.filter((s) => s.status === "Graded").length,
+              notSubmitted: this.students.filter(
+                (s) => s.status === "Not Submitted"
+              ).length,
+            };
+          },
+
+          // Filter the student list based on the active tab
+          get filteredStudents() {
+            if (this.filter === "all") {
+              return this.students;
+            }
+            if (this.filter === "needs-grading") {
+              return this.students.filter(
+                (s) => s.status === "Needs Grading" || s.status === "Late"
+              );
+            }
+            if (this.filter === "not-submitted") {
+              return this.students.filter((s) => s.status === "Not Submitted");
+            }
+            return this.students;
+          },
+
+          // Helper to find the original index of a student
+          findStudentIndex(id) {
+            return this.students.findIndex((s) => s.id === id);
+          },
+
+          // Function to open the modal
+          viewSubmission(student, index) {
+            // CHANGED: Use a deep copy for the modal to avoid instant table updates
+            this.currentStudent = JSON.parse(JSON.stringify(student));
+            this.currentStudentIndex = index;
+            Alpine.store("submissionModalOpen", true);
+          },
+
+          // Function to save grade from the modal and close it
+          saveGradeAndClose() {
+            this.updateStudentGrade(this.currentStudent);
+            Alpine.store("submissionModalOpen", false);
+            this.currentStudent = {};
+            this.currentStudentIndex = -1;
+          },
+
+          // Function to save grade and move to the next student
+          saveGradeAndNext() {
+            this.updateStudentGrade(this.currentStudent);
+
+            let currentList = this.filteredStudents;
+            let currentIndexInFilteredList = currentList.findIndex(
+              (s) => s.id === this.currentStudent.id
+            );
+
+            if (currentIndexInFilteredList + 1 < currentList.length) {
+              let nextStudent = currentList[currentIndexInFilteredList + 1];
+              // CHANGED: Use a deep copy for the next student
+              this.currentStudent = JSON.parse(JSON.stringify(nextStudent));
+              this.currentStudentIndex = this.findStudentIndex(nextStudent.id);
+            } else {
+              Alpine.store("submissionModalOpen", false);
+              this.currentStudent = {};
+              this.currentStudentIndex = -1;
+              alert("All assignments in this filter have been reviewed!");
+            }
+          },
+
+          // Helper function to update the student's data in the main table
+          updateStudentGrade(student) {
+            if (this.currentStudentIndex > -1) {
+              this.students[this.currentStudentIndex].grade = student.grade;
+              if (
+                student.grade !== null &&
+                student.grade !== "" &&
+                this.students[this.currentStudentIndex].status !== "Graded"
+              ) {
+                this.students[this.currentStudentIndex].status = "Graded";
+              }
+            }
+          },
+
+          // This is the "Save All Grades" button from the main table
+          saveGrades() {
+            this.students.forEach((student) => {
+              if (
+                student.grade !== null &&
+                student.grade !== "" &&
+                student.status !== "Graded"
+              ) {
+                student.status = "Graded";
+              }
+            });
+            alert("Grades saved successfully!");
+            this.filter = "needs-grading";
+          },
+        }));
+      });
+    </script>
+  </body>
+</html>

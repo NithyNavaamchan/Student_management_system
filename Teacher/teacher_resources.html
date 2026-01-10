@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Resources</title>
+
+    <!-- Tailwind CSS Script -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+    <!-- Custom Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                DEFAULT: "#4F46E5", // Indigo-600
+                hover: "#4338CA", // Indigo-700
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Alpine.js -->
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <style>
+      /* Simple scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+      }
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body class="font-sans bg-gray-50">
+    <div
+      x-data="{ sidebarOpen: window.innerWidth > 1024, profileOpen: false, notificationOpen: false }"
+      class="flex h-screen bg-gray-100"
+    >
+      <!-- Sidebar Overlay (Mobile) -->
+      <div
+        x-show="sidebarOpen"
+        @click="sidebarOpen = false"
+        class="fixed inset-0 bg-black/50 z-30 lg:hidden"
+        x-cloak
+      ></div>
+
+      <!-- Sidebar -->
+      <aside
+        class="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-white border-r transition-transform duration-300 transform"
+        :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+      >
+        <!-- Sidebar Header -->
+        <div class="h-24 flex items-center justify-center border-b">
+          <div class="flex flex-col items-center text-center p-4">
+            <img
+              class="h-14 w-14 rounded-full"
+              src="https://placehold.co/100x100/C7D2FE/4338CA?text=MD"
+              alt="Mr. David"
+            />
+            <h3 class="text-sm font-semibold text-gray-800 mt-2">Mr. David</h3>
+            <span class="text-xs text-gray-500">Teacher ID: TCH10023</span>
+          </div>
+        </div>
+
+        <!-- Sidebar Navigation (Teacher) -->
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="py-4">
+            <li class="px-4">
+              <a
+                href="teacher_dashboard.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2.5a.5.5 0 01.5-.5h3a.5.5 0 01.5.5V17a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Dashboard</span>
+              </a>
+            </li>
+
+            <li class="px-4 mt-2">
+              <a
+                href="teacher_assignments.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm3 0a1 1 0 000 2h.01a1 1 0 100-2H13z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Assignments</span>
+              </a>
+            </li>
+
+            <!-- Exams (Split) -->
+            <li class="px-4 mt-2">
+              <a
+                href="teacher_exams.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <!-- Heroicon: clipboard-document-list -->
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M12.5 3.25a.75.75 0 01.75.75v.5c0 .414.336.75.75.75h.5a.75.75 0 01.75.75v10a.75.75 0 01-.75.75H5.75a.75.75 0 01-.75-.75V5.75a.75.75 0 01.75-.75h.5a.75.75 0 01.75-.75v-.5a.75.75 0 01.75-.75h5zM3 5.75A2.25 2.25 0 015.25 3.5h.5a2.25 2.25 0 012.25-2.25h4a2.25 2.25 0 012.25 2.25h.5A2.25 2.25 0 0117 5.75v10A2.25 2.25 0 0114.75 18H5.25A2.25 2.25 0 013 15.75V5.75z"
+                    clip-rule="evenodd"
+                  />
+                  <path
+                    d="M7 8.25a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 017 8.25zM7 11.25a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 017 11.25zM7 14.25a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 017 14.25z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exams</span>
+              </a>
+            </li>
+            <!-- NEW: Resources -->
+            <li class="px-4 mt-2">
+              <a
+                href="teacher_resources.html"
+                class="flex items-center px-4 py-3 bg-primary text-white rounded-lg"
+              >
+                <!-- Heroicon: book-open -->
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3.49 2.22A2.25 2.25 0 001.25 4.5v11A2.25 2.25 0 003.5 17.75h13A2.25 2.25 0 0018.75 15.5v-11A2.25 2.25 0 0016.5 2.22H3.49zM2.75 4.5c0-.69.56-1.25 1.25-1.25h12c.69 0 1.25.56 1.25 1.25v11c0 .69-.56 1.25-1.25 1.25h-12c-.69 0-1.25-.56-1.25-1.25v-11z"
+                    clip-rule="evenodd"
+                  />
+                  <path
+                    d="M10 4.25a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5a.75.75 0 01.75-.75z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 8.854l-3.03 3.03a.75.75 0 001.06 1.06L10 10.97l2.97 2.97a.75.75 0 001.06-1.06L11.061 8.854 10 7.793l-1.061 1.06z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Resources</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="teacher_timetable.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Timetable</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main content -->
+      <div
+        class="flex-1 flex flex-col overflow-hidden transition-all duration-300"
+        :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'"
+      >
+        <header
+          class="h-16 flex items-center justify-between bg-white border-b px-6"
+        >
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="text-gray-600 hover:text-gray-800"
+          >
+            <svg
+              class="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+          <div class="hidden md:flex items-center">
+            <svg
+              class="w-6 h-6 text-primary"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+              />
+              <path
+                d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+              />
+              <path
+                d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+              />
+            </svg>
+            <h2 class="ml-2 text-lg font-semibold text-gray-800">
+              Student Management System
+            </h2>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="relative" x-data="{ open: false }">
+              <button
+                @click="open = !open; profileOpen = false"
+                class="text-gray-600 hover:text-gray-800 relative"
+              >
+                <svg
+                  class="w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.017 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                  />
+                </svg>
+                <span
+                  class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"
+                ></span>
+              </button>
+              <div
+                x-show="open"
+                @click.away="open = false"
+                x-cloak
+                x-transition
+                class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl overflow-hidden z-10"
+              >
+                <div class="p-4 border-b">
+                  <h3 class="font-semibold text-gray-800">Notifications</h3>
+                </div>
+                <div class="divide-y max-h-80 overflow-y-auto">
+                  <a href="#" class="flex p-4 hover:bg-gray-50">
+                    <div class="flex-shrink-0 mr-3">
+                      <div
+                        class="w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"
+                          />
+                          <path
+                            fill-rule="evenodd"
+                            d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm3 0a1 1 0 000 2h.01a1 1 0 100-2H13z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-800">New Assignment Graded</p>
+                      <p class="text-xs text-gray-500">1 hour ago</p>
+                    </div>
+                  </a>
+                  <a href="#" class="flex p-4 hover:bg-gray-50">
+                    <div class="flex-shrink-0 mr-3">
+                      <div
+                        class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-800">
+                        Parent Message Received
+                      </p>
+                      <p class="text-xs text-gray-500">3 hours ago</p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="relative" x-data="{ open: false }">
+              <button
+                @click="open = !open; notificationOpen = false"
+                class="flex items-center space-x-2"
+              >
+                <span class="text-sm font-medium text-gray-800 hidden sm:block"
+                  >Mr. David</span
+                >
+                <svg
+                  class="w-4 h-4 text-gray-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+              <div
+                x-show="open"
+                @click.away="open = false"
+                x-cloak
+                x-transition
+                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl overflow-hidden z-10"
+              >
+                <a
+                  href="teacher_profile.html"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >My Profile</a
+                >
+                <a
+                  href="#logout"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >Logout</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main
+          class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 sm:p-6"
+          x-data="resourcesPage"
+        >
+          <div class="max-w-7xl mx-auto">
+            <!-- Page Header -->
+            <div
+              class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4"
+            >
+              <h1 class="text-2xl font-semibold text-gray-900">
+                Manage Resources
+              </h1>
+              <div
+                class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto"
+              >
+                <!-- Class Filter -->
+                <select
+                  x-model="classFilter"
+                  class="w-full sm:w-auto rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                >
+                  <option value="all">All Classes</option>
+                  <option value="10A">Class 10-A (Math)</option>
+                  <option value="10B">Class 10-B (Math)</option>
+                  <option value="11A">Class 11-A (Physics)</option>
+                </select>
+                <!-- Type Filter -->
+                <select
+                  x-model="typeFilter"
+                  class="w-full sm:w-auto rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                >
+                  <option value="all">All Types</option>
+                  <option value="PDF">PDF</option>
+                  <option value="Video">Video</option>
+                  <option value="Image">Image</option>
+                  <option value="Other">Other</option>
+                </select>
+                <!-- Create New Button -->
+                <button
+                  @click="showUploadModal = true"
+                  type="button"
+                  class="w-full sm:w-auto justify-center flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg shadow-sm hover:bg-primary-hover"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  Upload New
+                </button>
+              </div>
+            </div>
+
+            <!-- Resource Card Grid -->
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            >
+              <template
+                x-for="resource in filteredResources"
+                :key="resource.id"
+              >
+                <div
+                  class="bg-white rounded-lg shadow-sm flex flex-col overflow-hidden"
+                >
+                  <!-- Card Icon/Image -->
+                  <div
+                    class="h-40 flex items-center justify-center bg-gray-100"
+                    :class="{'bg-red-50': resource.type === 'PDF', 'bg-blue-50': resource.type === 'Video', 'bg-green-50': resource.type === 'Image'}"
+                  >
+                    <!-- ... [Icon SVGs] ... -->
+                  </div>
+                  <div class="p-4 flex-grow">
+                    <h3
+                      class="text-base font-bold text-gray-900 truncate"
+                      x-text="resource.title"
+                    ></h3>
+                    <p
+                      class="text-sm text-gray-500"
+                      x-text="`${resource.class} • ${resource.type} • ${resource.size}`"
+                    ></p>
+                  </div>
+                  <!-- CHANGED: Buttons are now wired up -->
+                  <div
+                    class="border-t border-gray-200 px-4 py-3 flex justify-end space-x-2"
+                  >
+                    <button
+                      @click="openEditModal(resource)"
+                      type="button"
+                      class="text-xs font-medium text-gray-600 hover:text-primary"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      @click="openDeleteModal(resource)"
+                      type="button"
+                      class="text-xs font-medium text-red-500 hover:text-red-700"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </template>
+
+              <!-- No results message -->
+              <template x-if="filteredResources.length === 0">
+                <!-- ... [No results content] ... -->
+              </template>
+            </div>
+          </div>
+
+          <!-- Upload Modal -->
+          <div
+            x-show="showUploadModal"
+            @keydown.escape.window="showUploadModal = false"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            x-cloak
+          >
+            <form
+              @submit.prevent="uploadResource"
+              x-show="showUploadModal"
+              @click.away="showUploadModal = false"
+              x-transition
+              class="bg-white rounded-lg shadow-xl w-full max-w-lg"
+            >
+              <!-- ... [Upload Modal content] ... -->
+            </form>
+          </div>
+          <!-- End Upload Modal -->
+
+          <div
+            x-show="showEditModal"
+            @keydown.escape.window="showEditModal = false"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            x-cloak
+          >
+            <form
+              @submit.prevent="updateResource"
+              x-show="showEditModal"
+              @click.away="showEditModal = false"
+              x-transition
+              class="bg-white rounded-lg shadow-xl w-full max-w-lg"
+            >
+              <!-- Modal Header -->
+              <div class="flex items-center justify-between p-4 border-b">
+                <h3 class="text-lg font-semibold text-gray-900">
+                  Edit Resource
+                </h3>
+                <button
+                  @click="showEditModal = false"
+                  type="button"
+                  class="text-gray-400 hover:text-gray-600"
+                >
+                  <svg
+                    class="w-6 h-6"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <!-- Modal Body -->
+              <div class="p-6 space-y-4">
+                <div>
+                  <label
+                    for="editResourceTitle"
+                    class="block text-sm font-medium text-gray-700"
+                    >Resource Title</label
+                  >
+                  <input
+                    type="text"
+                    x-model="currentResource.title"
+                    id="editResourceTitle"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    required
+                  />
+                </div>
+                <div>
+                  <label
+                    for="editResourceClass"
+                    class="block text-sm font-medium text-gray-700"
+                    >Class</label
+                  >
+                  <select
+                    x-model="currentResource.class"
+                    id="editResourceClass"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    required
+                  >
+                    <option value="All Classes">All Classes</option>
+                    <option value="10A">Class 10-A (Math)</option>
+                    <option value="10B">Class 10-B (Math)</option>
+                    <option value="11A">Class 11-A (Physics)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >File</label
+                  >
+                  <p
+                    class="mt-1 text-sm text-gray-500 bg-gray-100 p-2 rounded-md border"
+                    x-text="currentResource.fileName || 'No file attached'"
+                  ></p>
+                  <p class="text-xs text-gray-500 mt-1">
+                    File uploading is not available in edit mode. To change the
+                    file, please delete and re-upload.
+                  </p>
+                </div>
+              </div>
+              <!-- Modal Footer -->
+              <div
+                class="flex justify-end items-center p-4 bg-gray-50 border-t rounded-b-lg"
+              >
+                <button
+                  @click="showEditModal = false"
+                  type="button"
+                  class="px-4 py-2 bg-white border border-gray-300 text-sm font-medium text-gray-700 rounded-lg shadow-sm hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="ml-3 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg shadow-sm hover:bg-primary-hover"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+          <!-- End Edit Modal -->
+
+          <div
+            x-show="showDeleteModal"
+            @keydown.escape.window="showDeleteModal = false"
+            class="fixed inset-0 z-50 overflow-y-auto"
+            x-cloak
+          >
+            <div
+              class_="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+            >
+              <!-- Background overlay -->
+              <div
+                x-show="showDeleteModal"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                @click="showDeleteModal = false"
+                class="fixed inset-0 transition-opacity bg-gray-500/75"
+              ></div>
+
+              <!-- Modal panel -->
+              <div
+                x-show="showDeleteModal"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                class="relative inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg"
+              >
+                <div class="sm:flex sm:items-start">
+                  <div
+                    class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+                  >
+                    <svg
+                      class="h-6 w-6 text-red-600"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.008v.008H12v-.008z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">
+                      Delete Resource
+                    </h3>
+                    <div class="mt-2">
+                      <p class="text-sm text-gray-500">
+                        Are you sure you want to delete the resource
+                        <strong x-text="currentResource.title"></strong>? This
+                        cannot be undone.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                  <button
+                    @click="deleteResource()"
+                    type="button"
+                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    @click="showDeleteModal = false"
+                    type="button"
+                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End Delete Modal -->
+        </main>
+      </div>
+    </div>
+
+    <!-- JavaScript Block -->
+    <script>
+      function resourcesPage() {
+        return {
+          classFilter: "all",
+          typeFilter: "all",
+          showUploadModal: false,
+          // NEW: State for new modals
+          showEditModal: false,
+          showDeleteModal: false,
+          currentResource: { id: null, title: "", class: "", fileName: "" },
+          newResource: {
+            title: "",
+            class: "",
+            file: null,
+          },
+          resources: [
+            {
+              id: 1,
+              title: "Chapter 5 Notes",
+              class: "10A",
+              type: "PDF",
+              size: "2.5MB",
+              fileName: "chapter_5_notes.pdf",
+            },
+            {
+              id: 2,
+              title: "Intro to Kinematics",
+              class: "11A",
+              type: "Video",
+              size: "45.2MB",
+              fileName: "intro_kinematics.mp4",
+            },
+            {
+              id: 3,
+              title: "Algebra Worksheet",
+              class: "10B",
+              type: "PDF",
+              size: "1.1MB",
+              fileName: "algebra_worksheet_1.pdf",
+            },
+            {
+              id: 4,
+              title: "Historical Map (Renaissance)",
+              class: "All Classes",
+              type: "Image",
+              size: "5.8MB",
+              fileName: "renaissance_map.jpg",
+            },
+            {
+              id: 5,
+              title: "Syllabus - Math 10A",
+              class: "10A",
+              type: "Other",
+              size: "300KB",
+              fileName: "syllabus_10a.docx",
+            },
+            {
+              id: 6,
+              title: "Lab Safety Video",
+              class: "11A",
+              type: "Video",
+              size: "120.7MB",
+              fileName: "lab_safety.mp4",
+            },
+          ],
+          get filteredResources() {
+            let filtered = this.resources;
+
+            // Filter by Class
+            if (this.classFilter !== "all") {
+              filtered = filtered.filter(
+                (r) => r.class === this.classFilter || r.class === "All Classes"
+              );
+            }
+
+            // Filter by Type
+            if (this.typeFilter !== "all") {
+              filtered = filtered.filter((r) => r.type === this.typeFilter);
+            }
+
+            return filtered;
+          },
+          formatFileSize(bytes) {
+            if (!bytes || bytes === 0) return "0 Bytes";
+            const k = 1024;
+            const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return (
+              parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
+            );
+          },
+          uploadResource() {
+            if (
+              !this.newResource.title ||
+              !this.newResource.class ||
+              !this.newResource.file
+            ) {
+              alert("Please fill out all fields and select a file.");
+              return;
+            }
+
+            // 1. Create a new resource object
+            const newId = Math.max(...this.resources.map((r) => r.id)) + 1;
+            const fileType = this.newResource.file.type.split("/")[0]; // 'image', 'video', 'application'
+            let simpleType = "Other";
+            if (fileType === "image") simpleType = "Image";
+            if (fileType === "video") simpleType = "Video";
+            if (this.newResource.file.type === "application/pdf")
+              simpleType = "PDF";
+
+            const newRes = {
+              id: newId,
+              title: this.newResource.title,
+              class: this.newResource.class,
+              type: simpleType,
+              size: this.formatFileSize(this.newResource.file.size),
+              fileName: this.newResource.file.name,
+            };
+
+            // 2. Add to the main array (at the beginning)
+            this.resources.unshift(newRes);
+
+            // 3. Reset form and close modal
+            this.newResource.title = "";
+            this.newResource.class = "";
+            this.newResource.file = null;
+            document.getElementById("newResourceFile").value = null; // Clear file input
+            this.showUploadModal = false;
+
+            // 4. Show success
+            alert("Resource uploaded successfully!");
+          },
+
+          //
+          // NEW FUNCTIONS FOR EDIT AND DELETE
+          //
+          openEditModal(resource) {
+            // Create a copy to avoid live-editing the card
+            this.currentResource = { ...resource };
+            this.showEditModal = true;
+          },
+
+          updateResource() {
+            let index = this.resources.findIndex(
+              (r) => r.id === this.currentResource.id
+            );
+            if (index !== -1) {
+              // Update the original resource
+              this.resources[index].title = this.currentResource.title;
+              this.resources[index].class = this.currentResource.class;
+            }
+            this.showEditModal = false;
+            this.currentResource = {
+              id: null,
+              title: "",
+              class: "",
+              fileName: "",
+            }; // Reset
+            alert("Resource updated!");
+          },
+
+          openDeleteModal(resource) {
+            this.currentResource = resource; // Just need a reference to read the title
+            this.showDeleteModal = true;
+          },
+
+          deleteResource() {
+            this.resources = this.resources.filter(
+              (r) => r.id !== this.currentResource.id
+            );
+            this.showDeleteModal = false;
+            this.currentResource = {
+              id: null,
+              title: "",
+              class: "",
+              fileName: "",
+            }; // Reset
+          },
+        };
+      }
+
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("resourcesPage", resourcesPage);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Assignments</title>
+
+    <!-- Tailwind CSS Script -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+    <!-- Custom Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                DEFAULT: "#4F46E5", // Indigo-600
+                hover: "#4338CA", // Indigo-700
+              },
+            },
+            animation: {
+              pulse: "pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Alpine.js -->
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <style>
+      /* Simple scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+      }
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body class="font-sans bg-gray-50">
+    <div
+      x-data="{ sidebarOpen: window.innerWidth > 1024, profileOpen: false, notificationOpen: false }"
+      class="flex h-screen bg-gray-100"
+    >
+      <!-- Sidebar Overlay (Mobile) -->
+      <div
+        x-show="sidebarOpen"
+        @click="sidebarOpen = false"
+        class="fixed inset-0 bg-black/50 z-30 lg:hidden"
+        x-cloak
+      ></div>
+
+      <!-- Sidebar -->
+      <aside
+        class="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-white border-r transition-transform duration-300 transform"
+        :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+      >
+        <!-- Sidebar Header -->
+        <div class="h-24 flex items-center justify-center border-b">
+          <div class="flex flex-col items-center text-center p-4">
+            <!-- Added loading="lazy" for page efficiency -->
+            <img
+              class="h-14 w-14 rounded-full"
+              src="https://placehold.co/100x100/E2E8F0/4A5568?text=EJ"
+              alt="Emily Johnson"
+              loading="lazy"
+            />
+            <h3 class="text-sm font-semibold text-gray-800 mt-2">
+              Emily Johnson
+            </h3>
+            <span class="text-xs text-gray-500">ID: STU2023456</span>
+          </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="py-4">
+            <!-- ... existing nav items ... -->
+            <li class="px-4">
+              <a
+                href="student_dashboard.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2.5a.5.5 0 01.5-.5h3a.5.5 0 01.5.5V17a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Dashboard</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="student_assignments.html"
+                class="flex items-center px-4 py-3 bg-primary text-white rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm3 0a1 1 0 000 2h.01a1 1 0 100-2H13z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Assignments</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="#ebooks"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3.49 2.22A2.25 2.25 0 001.25 4.5v11A2.25 2.25 0 003.5 17.75h13A2.25 2.25 0 0018.75 15.5v-11A2.25 2.25 0 0016.5 2.22H3.49zM2.75 4.5c0-.69.56-1.25 1.25-1.25h12c.69 0 1.25.56 1.25 1.25v11c0 .69-.56 1.25-1.25 1.25h-12c-.69 0-1.25-.56-1.25-1.25v-11z"
+                    clip-rule="evenodd"
+                  />
+                  <path
+                    d="M10 4.25a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5a.75.75 0 01.75-.75z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 8.854l-3.03 3.03a.75.75 0 001.06 1.06L10 10.97l2.97 2.97a.75.75 0 001.06-1.06L11.061 8.854 10 7.793l-1.061 1.06z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Resources</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="student_exam_results.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.004-.002l.004-.002l.003-.001l.002-.001l.002-.001L10.394 3.2l.002.001l.002.001l.003.001l.004.002l.004.002a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+                  />
+                  <path
+                    d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+                  />
+                  <path
+                    d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exam Results</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="student_exam_schedule.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exam Schedule</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="border-t p-4">
+          <span class="ml-3 font-medium">VTN</span>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <div
+        class="flex-1 flex flex-col overflow-hidden transition-all duration-300"
+        :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'"
+      >
+        <!-- Top bar -->
+        <header
+          class="h-16 flex items-center justify-between bg-white border-b px-6"
+        >
+          <!-- ... existing header ... -->
+          <!-- Sidebar Toggle -->
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="text-gray-600 hover:text-gray-800"
+          >
+            <svg
+              class="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+          <!-- Header Title (hidden on mobile) -->
+          <div class="hidden md:flex items-center">
+            <svg
+              class="w-6 h-6 text-primary"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+              />
+              <path
+                d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+              />
+              <path
+                d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+              />
+            </svg>
+            <h2 class="ml-2 text-lg font-semibold text-gray-800">
+              Student Management System
+            </h2>
+          </div>
+          <!-- Top bar right -->
+          <div class="flex items-center space-x-4">
+            <!-- Notifications -->
+            <div class="relative" x-data="{ open: false }">
+              <button
+                @click="open = !open; profileOpen = false"
+                class="text-gray-600 hover:text-gray-800 relative"
+              >
+                <svg
+                  class="w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.017 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                  />
+                </svg>
+                <span
+                  class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"
+                ></span>
+              </button>
+              <div
+                x-show="open"
+                @click.away="open = false"
+                x-cloak
+                x-transition
+                class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl overflow-hidden z-10"
+              >
+                <div class="p-4 border-b">
+                  <h3 class="font-semibold text-gray-800">Notifications</h3>
+                </div>
+                <div class="divide-y max-h-80 overflow-y-auto">
+                  <a href="#" class="flex p-4 hover:bg-gray-50">
+                    <div class="flex-shrink-0 mr-3">
+                      <div
+                        class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-800">Assignment Submitted</p>
+                      <p class="text-xs text-gray-500">2 days ago</p>
+                    </div>
+                  </a>
+                  <a href="#" class="flex p-4 hover:bg-gray-50">
+                    <div class="flex-shrink-0 mr-3">
+                      <div
+                        class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-800">Exam Result Published</p>
+                      <p class="text-xs text-gray-500">1 day ago</p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <!-- Profile -->
+            <div class="relative" x-data="{ open: false }">
+              <button
+                @click="open = !open; notificationOpen = false"
+                class="flex items-center space-x-2"
+              >
+                <span class="text-sm font-medium text-gray-800 hidden sm:block"
+                  >Emily</span
+                >
+                <svg
+                  class="w-4 h-4 text-gray-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+              <div
+                x-show="open"
+                @click.away="open = false"
+                x-cloak
+                x-transition
+                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl overflow-hidden z-10"
+              >
+                <a
+                  href="student_profile.html"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >My Profile</a
+                >
+                <a
+                  href="#logout"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >Logout</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main content area -->
+        <main
+          class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 sm:p-6"
+        >
+          <div class="max-w-7xl mx-auto" x-data="assignmentsData">
+            <!-- Page Header -->
+            <h1 class="text-2xl font-semibold text-gray-900 mb-6">
+              Assignments
+            </h1>
+
+            <!-- Tab Navigation & Search -->
+            <div
+              class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4"
+            >
+              <!-- Tabs -->
+              <div class="border-b border-gray-200 w-full sm:w-auto">
+                <nav class="-mb-px flex flex-wrap space-x-6" aria-label="Tabs">
+                  <button
+                    @click="activeTab = 'all'"
+                    :class="{ 'border-primary text-primary': activeTab === 'all', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'all' }"
+                    class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm"
+                  >
+                    All
+                  </button>
+                  <button
+                    @click="activeTab = 'pending'"
+                    :class="{ 'border-primary text-primary': activeTab === 'pending', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'pending' }"
+                    class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm"
+                  >
+                    Pending
+                  </button>
+                  <button
+                    @click="activeTab = 'overdue'"
+                    :class="{ 'border-primary text-primary': activeTab === 'overdue', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'overdue' }"
+                    class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm"
+                  >
+                    Overdue
+                  </button>
+                  <button
+                    @click="activeTab = 'submitted'"
+                    :class="{ 'border-primary text-primary': activeTab === 'submitted', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'submitted' }"
+                    class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm"
+                  >
+                    Submitted
+                  </button>
+                  <button
+                    @click="activeTab = 'graded'"
+                    :class="{ 'border-primary text-primary': activeTab === 'graded', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'graded' }"
+                    class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm"
+                  >
+                    Graded
+                  </button>
+                </nav>
+              </div>
+              <!-- Search & Sort Controls -->
+              <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                <!-- Sort By Dropdown -->
+                <div class="relative w-full sm:w-48">
+                  <select
+                    x-model="sortBy"
+                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                  >
+                    <option value="due_newest">Due Date (Newest)</option>
+                    <option value="due_oldest">Due Date (Oldest)</option>
+                    <option value="subject_az">Subject (A-Z)</option>
+                  </select>
+                </div>
+                <!-- Search Bar -->
+                <div class="relative w-full sm:w-64">
+                  <div
+                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                  >
+                    <svg
+                      class="w-5 h-5 text-gray-400"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    type="search"
+                    x-model="search"
+                    placeholder="Search assignments..."
+                    class="block w-full rounded-md border-gray-300 shadow-sm pl-10 focus:border-primary focus:ring-primary sm:text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Loading Skeleton -->
+              <template x-if="isLoading">
+                <template x-for="i in 3" :key="i">
+                  <div
+                    class="bg-white rounded-lg shadow-sm flex flex-col overflow-hidden animate-pulse"
+                  >
+                    <div class="p-5 flex-grow">
+                      <div class="flex justify-between items-start mb-3">
+                        <div class="h-4 bg-gray-200 rounded w-1/3"></div>
+                        <div class="h-4 bg-gray-200 rounded-full w-16"></div>
+                      </div>
+                      <div class="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div class="h-4 bg-gray-200 rounded w-1/2 mb-1"></div>
+                      <div class="h-4 bg-gray-200 rounded w-1/3"></div>
+                    </div>
+                    <div class="border-t border-gray-200 px-5 py-3">
+                      <div class="h-5 bg-gray-200 rounded w-1/2 mx-auto"></div>
+                    </div>
+                  </div>
+                </template>
+              </template>
+
+              <!-- Error Message -->
+              <template x-if="error">
+                <div
+                  class="md:col-span-2 lg:col-span-3 bg-red-50 border-l-4 border-red-400 p-4 rounded-md shadow-sm"
+                >
+                  <div class="flex">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-red-400"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <div class="ml-3">
+                      <h3 class="text-sm font-medium text-red-800">
+                        Failed to load assignments
+                      </h3>
+                      <p class="mt-1 text-sm text-red-700" x-text="error"></p>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Assignments Grid -->
+              <template x-if="!isLoading && !error">
+                <template
+                  x-for="assignment in filteredAssignments"
+                  :key="assignment.id"
+                >
+                  <div
+                    class="bg-white rounded-lg shadow-sm flex flex-col overflow-hidden transition-shadow duration-200 hover:shadow-md"
+                  >
+                    <div class="p-5 flex-grow">
+                      <div class="flex justify-between items-start mb-3">
+                        <span
+                          class="text-sm font-semibold text-primary"
+                          x-text="assignment.subject"
+                        ></span>
+                        <span
+                          class="text-xs font-semibold px-2.5 py-0.5 rounded-full"
+                          :class="{
+                            'bg-yellow-100 text-yellow-800':
+                              assignment.status === 'Pending',
+                            'bg-red-100 text-red-800':
+                              assignment.status === 'Overdue',
+                            'bg-blue-100 text-blue-800':
+                              assignment.status === 'Submitted',
+                            'bg-green-100 text-green-800':
+                              assignment.status === 'Graded',
+                          }"
+                          x-text="assignment.status"
+                        ></span>
+                      </div>
+                      <h3
+                        class="text-lg font-bold text-gray-900 mb-2 truncate"
+                        x-text="assignment.title"
+                      ></h3>
+                      <div class="flex items-center text-sm text-gray-500 mb-1">
+                        <svg
+                          class="w-4 h-4 mr-1.5 text-gray-400"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                        Due:
+                        <span
+                          class="font-medium text-gray-600 ml-1"
+                          x-text="assignment.dueDate"
+                        ></span>
+                      </div>
+                      <div class="flex items-center text-sm text-gray-500">
+                        <svg
+                          class="w-4 h-4 mr-1.5 text-gray-400"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M15.965 4.376a1.5 1.5 0 01.328 1.18l-1.63 7.697a1.5 1.5 0 01-1.472 1.247H6.81a1.5 1.5 0 01-1.473-1.247L3.707 5.556a1.5 1.5 0 01.328-1.18A1.5 1.5 0 015.5 4h9a1.5 1.5 0 011.465.376zm-3.118 7.124a.75.75 0 01-.75-.75V8a.75.75 0 011.5 0v2.75a.75.75 0 01-.75.75zm-3.25 0a.75.75 0 01-.75-.75V8a.75.75 0 011.5 0v2.75a.75.75 0 01-.75.75z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                        Points:
+                        <span
+                          class="font-medium text-gray-600 ml-1"
+                          x-text="assignment.points"
+                        ></span>
+                        <template x-if="assignment.grade !== null">
+                          <span
+                            class="ml-1 font-bold text-green-600"
+                            x-text="'('+assignment.grade+')'"
+                          ></span>
+                        </template>
+                      </div>
+                    </div>
+                    <div class="border-t border-gray-200 px-5 py-3">
+                      <a
+                        :href="'student_assignment_detail.html?id=' + assignment.id"
+                        class="text-sm font-medium text-primary hover:text-primary-hover w-full flex justify-center items-center"
+                      >
+                        <template
+                          x-if="assignment.status === 'Pending' || assignment.status === 'Overdue'"
+                          ><span>Submit Assignment</span></template
+                        >
+                        <template x-if="assignment.status === 'Submitted'"
+                          ><span>View Submission</span></template
+                        >
+                        <template x-if="assignment.status === 'Graded'"
+                          ><span>View Grade & Feedback</span></template
+                        >
+                        <svg
+                          class="w-4 h-4 ml-1"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+                </template>
+              </template>
+
+              <!-- No results message -->
+              <template
+                x-if="!isLoading && !error && filteredAssignments.length === 0"
+              >
+                <div
+                  class="md:col-span-2 lg:col-span-3 text-center text-gray-500 py-16"
+                >
+                  <svg
+                    class="mx-auto h-12 w-12 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                  <h3 class="mt-2 text-sm font-semibold text-gray-900">
+                    No assignments found
+                  </h3>
+                  <p class="mt-1 text-sm text-gray-500" x-show="search === ''">
+                    There are no assignments matching the filter "<span
+                      x-text="activeTab"
+                      class="font-medium"
+                    ></span
+                    >".
+                  </p>
+                  <p class="mt-1 text-sm text-gray-500" x-show="search !== ''">
+                    Your search for "<span
+                      x-text="search"
+                      class="font-medium"
+                    ></span
+                    >" returned no results.
+                  </p>
+                </div>
+              </template>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- JavaScript Block -->
+    <script>
+      function assignmentsData() {
+        return {
+          activeTab: "all", // 'all', 'pending', 'overdue', 'submitted', 'graded'
+          search: "",
+          sortBy: "due_newest", // 'due_newest', 'due_oldest', 'subject_az'
+          assignments: [],
+          isLoading: true,
+          error: null,
+
+          // Mock data that will be "fetched"
+          mockData: [
+            {
+              id: 1,
+              subject: "Advanced Mathematics",
+              title: "Calculus Problem Set 1",
+              status: "Pending",
+              dueDate: "2023-12-10",
+              points: 100,
+              grade: null,
+            },
+            {
+              id: 2,
+              subject: "Data Structures",
+              title: "Binary Tree Implementation",
+              status: "Pending",
+              dueDate: "2023-12-12",
+              points: 50,
+              grade: null,
+            },
+            {
+              id: 3,
+              subject: "Physics II",
+              title: "Lab Report: Optics",
+              status: "Submitted",
+              dueDate: "2023-12-05",
+              points: 75,
+              grade: null,
+            },
+            {
+              id: 4,
+              subject: "World History",
+              title: "Renaissance Essay",
+              status: "Graded",
+              dueDate: "2023-12-01",
+              points: 100,
+              grade: 88,
+            },
+            {
+              id: 5,
+              subject: "Computer Science",
+              title: "Algorithm Analysis Homework",
+              status: "Pending",
+              dueDate: "2023-12-14",
+              points: 100,
+              grade: null,
+            },
+            {
+              id: 6,
+              subject: "English Literature",
+              title: "Shakespeare Sonnet Analysis",
+              status: "Overdue",
+              dueDate: "2023-12-01",
+              points: 25,
+              grade: null,
+            },
+            {
+              id: 7,
+              subject: "Physics II",
+              title: "Wave Motion Problems",
+              status: "Graded",
+              dueDate: "2023-11-28",
+              points: 50,
+              grade: 45,
+            },
+          ],
+
+          // Initialize the component by fetching data
+          init() {
+            this.fetchAssignments();
+          },
+
+          // Mock data fetching function
+          fetchAssignments() {
+            this.isLoading = true;
+            this.error = null;
+
+            // Simulate a network request
+            setTimeout(() => {
+              try {
+                // To test the error state, uncomment the line below:
+                // if (Math.random() > 0.5) throw new Error("Could not connect to the server. Please try again later.");
+
+                // Format dates for display from the raw data
+                this.assignments = this.mockData.map((assignment) => {
+                  const date = new Date(assignment.dueDate + "T00:00:00"); // Ensure parsing as local date
+                  return {
+                    ...assignment,
+                    dueDate: date.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    }),
+                    rawDueDate: date, // Keep raw date object for sorting
+                  };
+                });
+
+                this.isLoading = false;
+              } catch (e) {
+                this.error =
+                  e.message || "An unknown error occurred while fetching data.";
+                this.isLoading = false;
+              }
+            }, 1200); // 1.2 second delay
+          },
+
+          get filteredAssignments() {
+            let filtered = [...this.assignments]; // Work with a copy
+
+            // Filter by Tab Status
+            if (this.activeTab !== "all") {
+              filtered = filtered.filter((assignment) => {
+                if (this.activeTab === "pending")
+                  return assignment.status === "Pending";
+                if (this.activeTab === "overdue")
+                  return assignment.status === "Overdue";
+                if (this.activeTab === "submitted")
+                  return assignment.status === "Submitted";
+                if (this.activeTab === "graded")
+                  return assignment.status === "Graded";
+                return false; // Should not happen
+              });
+            }
+
+            // Filter by Search Term
+            if (this.search.trim() !== "") {
+              const searchTerm = this.search.toLowerCase();
+              filtered = filtered.filter(
+                (assignment) =>
+                  assignment.title.toLowerCase().includes(searchTerm) ||
+                  assignment.subject.toLowerCase().includes(searchTerm)
+              );
+            }
+
+            // Sort the filtered results
+            if (this.sortBy === "due_newest") {
+              filtered.sort((a, b) => b.rawDueDate - a.rawDueDate);
+            } else if (this.sortBy === "due_oldest") {
+              filtered.sort((a, b) => a.rawDueDate - b.rawDueDate);
+            } else if (this.sortBy === "subject_az") {
+              filtered.sort((a, b) => a.subject.localeCompare(b.subject));
+            }
+
+            return filtered;
+          },
+        };
+      }
+
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("assignmentsData", assignmentsData);
+      });
+    </script>
+  </body>
+</html>

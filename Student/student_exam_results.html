@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exam Results</title>
+
+    <!-- Tailwind CSS Script -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+    <!-- REMOVED: Chart.js script -->
+
+    <!-- Custom Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                DEFAULT: "#4F46E5", // Indigo-600
+                hover: "#4338CA", // Indigo-700
+              },
+            },
+            animation: {
+              pulse: "pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Alpine.js -->
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <style>
+      /* Simple scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+      }
+      [x-cloak] {
+        display: none !important;
+      }
+
+      /* NEW: Print-specific styles */
+      @media print {
+        body {
+          background: #fff;
+        }
+        .print-hide {
+          display: none !important;
+        }
+        .print-main {
+          margin-left: 0 !important;
+          width: 100% !important;
+          overflow: visible;
+          padding: 0 !important;
+        }
+        .print-no-style {
+          box-shadow: none;
+          border: 1px solid #e5e7eb; /* Add a border for clarity */
+          background: #fff;
+          -webkit-print-color-adjust: exact; /* Ensures backgrounds print in Chrome */
+          color-adjust: exact;
+        }
+        .lg\:border-b {
+          border-bottom-width: 1px !important;
+          border-color: #e5e7eb !important;
+        }
+        .lg\:border {
+          border-width: 1px !important;
+          border-color: #e5e7eb !important;
+        }
+        h1,
+        h3 {
+          page-break-after: avoid;
+        }
+        .bg-white {
+          background: #fff !important;
+          -webkit-print-color-adjust: exact;
+          color-adjust: exact;
+        }
+        /* Ensure pill backgrounds print */
+        .bg-green-100,
+        .bg-blue-100,
+        .bg-yellow-100,
+        .bg-orange-100,
+        .bg-red-100 {
+          -webkit-print-color-adjust: exact;
+          color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body class="font-sans bg-gray-50">
+    <div
+      x-data="{ sidebarOpen: window.innerWidth > 1024, profileOpen: false, notificationOpen: false }"
+      class="flex h-screen bg-gray-100"
+    >
+      <!-- ... (Sidebar code remains the same) ... -->
+      <!-- Sidebar Overlay (Mobile) -->
+      <div
+        x-show="sidebarOpen"
+        @click="sidebarOpen = false"
+        class="fixed inset-0 bg-black/50 z-30 lg:hidden print-hide"
+        x-cloak
+      ></div>
+
+      <!-- Sidebar -->
+      <aside
+        class="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-white border-r transition-transform duration-300 transform"
+        :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+      >
+        <!-- Sidebar Header -->
+        <div class="h-24 flex items-center justify-center border-b">
+          <div class="flex flex-col items-center text-center p-4">
+            <img
+              class="h-14 w-14 rounded-full"
+              src="https://placehold.co/100x100/E2E8F0/4A5568?text=EJ"
+              alt="Emily Johnson"
+            />
+            <h3 class="text-sm font-semibold text-gray-800 mt-2">
+              Emily Johnson
+            </h3>
+            <span class="text-xs text-gray-500">ID: STU2023456</span>
+          </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="py-4">
+            <li class="px-4">
+              <a
+                href="student_dashboard.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <!-- Heroicon: home -->
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2.5a.5.5 0 01.5-.5h3a.5.5 0 01.5.5V17a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Dashboard</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="student_assignments.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <!-- Heroicon: clipboard-list -->
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm3 0a1 1 0 000 2h.01a1 1 0 100-2H13z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Assignments</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="#ebooks"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <!-- Heroicon: book-open -->
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3.49 2.22A2.25 2.25 0 001.25 4.5v11A2.25 2.25 0 003.5 17.75h13A2.25 2.25 0 0018.75 15.5v-11A2.25 2.25 0 0016.5 2.22H3.49zM2.75 4.5c0-.69.56-1.25 1.25-1.25h12c.69 0 1.25.56 1.25 1.25v11c0 .69-.56 1.25-1.25 1.25h-12c-.69 0-1.25-.56-1.25-1.25v-11z"
+                    clip-rule="evenodd"
+                  />
+                  <path
+                    d="M10 4.25a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5a.75.75 0 01.75-.75z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 8.854l-3.03 3.03a.75.75 0 001.06 1.06L10 10.97l2.97 2.97a.75.75 0 001.06-1.06L11.061 8.854 10 7.793l-1.061 1.06z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Resources</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="student_exam_results.html"
+                class="flex items-center px-4 py-3 bg-primary text-white rounded-lg"
+              >
+                <!-- Heroicon: academic-cap -->
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.004-.002l.004-.002l.003-.001l.002-.001l.002-.001L10.394 3.2l.002.001l.002.001l.003.001l.004.002l.004.002a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+                  />
+                  <path
+                    d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+                  />
+                  <path
+                    d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exam Results</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="student_exam_schedule.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <!-- Heroicon: calendar -->
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exam Schedule</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="border-t p-4">
+          <span class="ml-3 font-medium">VTN</span>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <div
+        class="flex-1 flex flex-col overflow-hidden transition-all duration-300 print-main"
+        :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'"
+      >
+        <!-- Top bar -->
+        <header
+          class="h-16 flex items-center justify-between bg-white border-b px-6 print-hide"
+        >
+          <!-- ... (same as previous file's header) ... -->
+          <!-- Sidebar Toggle -->
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="text-gray-600 hover:text-gray-800"
+          >
+            <svg
+              class="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+          <!-- Header Title (hidden on mobile) -->
+          <div class="hidden md:flex items-center">
+            <svg
+              class="w-6 h-6 text-primary"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+              />
+              <path
+                d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+              />
+              <path
+                d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+              />
+            </svg>
+            <h2 class="ml-2 text-lg font-semibold text-gray-800">
+              Student Management System
+            </h2>
+          </div>
+          <!-- Top bar right -->
+          <div class="flex items-center space-x-4">
+            <!-- (Same as previous file's notifications/profile) -->
+          </div>
+        </header>
+
+        <!-- Main content area -->
+        <main
+          class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 sm:p-6 print:p-0"
+        >
+          <div class="max-w-7xl mx-auto" x-data="examResultsData">
+            <!-- Page Header -->
+            <div
+              class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4"
+            >
+              <h1 class="text-2xl font-semibold text-gray-900">Exam Results</h1>
+              <div class="flex items-center gap-4 w-full sm:w-auto">
+                <!-- NEW: Print Button -->
+                <button
+                  @click="printPage"
+                  type="button"
+                  class="print-hide w-full sm:w-auto inline-flex items-center justify-center gap-x-2 rounded-md bg-white px-3.5 py-2.5 text-sm font-medium text-gray-700 shadow-sm border border-gray-300 hover:bg-gray-50"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5 2.5a.5.5 0 01.5.5v1.5H14V3a.5.5 0 011 0v1.5H16a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2v-7a2 2 0 012-2h1.5V3a.5.5 0 01.5-.5zM4 6v7h12V6H4zm3 5.5a.5.5 0 01.5-.5h5a.5.5 0 010 1H7.5a.5.5 0 01-.5-.5zm0-2a.5.5 0 01.5-.5h5a.5.5 0 010 1H7.5a.5.5 0 01-.5-.5z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span class="hidden sm:block">Print Results</span>
+                </button>
+
+                <!-- Semester Filter -->
+                <div class="relative w-full sm:w-48">
+                  <select
+                    x-model="selectedSemester"
+                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm print-hide"
+                  >
+                    <option value="All">All Semesters</option>
+                    <template x-for="semester in allSemesters" :key="semester">
+                      <option :value="semester" x-text="semester"></option>
+                    </template>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Summary Card with Chart -->
+            <template x-if="!isLoading && !error && filteredResults.length > 0">
+              <div
+                class="mb-6 bg-white rounded-lg shadow-sm p-5 print-no-style"
+              >
+                <h3
+                  class="text-base font-semibold text-gray-900 mb-4"
+                  x-text="selectedSemester + ' Summary'"
+                ></h3>
+                <!-- MODIFIED: Removed grid layout and chart -->
+                <div>
+                  <!-- Col 1: Stats -->
+                  <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
+                    <div class="flex flex-col-reverse">
+                      <dt class="text-sm font-medium text-gray-500">
+                        Semester Average
+                      </dt>
+                      <dd
+                        class="text-2xl font-bold text-primary"
+                        x-text="summaryData.average + '%'"
+                      ></dd>
+                    </div>
+                    <div class="flex flex-col-reverse">
+                      <dt class="text-sm font-medium text-gray-500">
+                        Semester GPA
+                      </dt>
+                      <dd
+                        class="text-2xl font-bold text-primary"
+                        x-text="summaryData.gpa"
+                      ></dd>
+                    </div>
+                  </dl>
+                  <!-- Col 2: Chart (REMOVED) -->
+                </div>
+              </div>
+            </template>
+
+            <!-- Loading Skeleton -->
+            <template x-if="isLoading">
+              <div class="space-y-4 animate-pulse">
+                <!-- Skeleton for Summary Card -->
+                <div class="bg-white rounded-lg shadow-sm p-5">
+                  <div class="h-5 bg-gray-200 rounded w-1/3 mb-4"></div>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <div class="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                      <div class="h-8 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                    <div>
+                      <div class="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                      <div class="h-8 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Skeleton for Results List -->
+                <template x-for="i in 4" :key="i">
+                  <div class="bg-white rounded-lg shadow-sm p-4 space-y-3">
+                    <div class="h-5 bg-gray-200 rounded w-1/3 mb-2"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+                  </div>
+                </template>
+              </div>
+            </template>
+
+            <!-- Error Message -->
+            <template x-if="!isLoading && error">
+              <!-- ... (error message HTML remains the same) ... -->
+            </template>
+
+            <!-- Results List -->
+            <template x-if="!isLoading && !error && filteredResults.length > 0">
+              <div
+                class="space-y-4 lg:space-y-0 lg:border lg:border-gray-200 lg:rounded-lg lg:overflow-hidden print-no-style"
+              >
+                <!-- Desktop Table Header -->
+                <div
+                  class="hidden lg:grid lg:grid-cols-6 gap-4 px-4 py-3 text-sm font-semibold text-gray-500 bg-gray-50 border-b border-gray-200"
+                >
+                  <span class="lg:col-span-2">Subject & Exam</span>
+                  <span>Date</span>
+                  <span>Class Avg</span>
+                  <span>Score</span>
+                  <span>Grade</span>
+                </div>
+
+                <!-- Results Items (Cards on Mobile, Rows on Desktop) -->
+                <template x-for="result in filteredResults" :key="result.id">
+                  <div
+                    @click="openModal(result.id)"
+                    class="bg-white rounded-lg shadow-sm p-4 cursor-pointer transition-all duration-150 hover:bg-gray-50 hover:shadow-md lg:grid lg:grid-cols-6 lg:gap-4 lg:items-center lg:p-4 lg:rounded-none lg:shadow-none lg:border-b lg:border-gray-200 print-no-style"
+                    x-cloak
+                  >
+                    <!-- Col 1 & 2: Subject & Exam Name (stacked) -->
+                    <div class="lg:col-span-2">
+                      <h3
+                        class="text-base font-semibold text-primary lg:text-gray-900"
+                        x-text="result.subject"
+                      ></h3>
+                      <p
+                        class="text-sm text-gray-600"
+                        x-text="result.examName"
+                      ></p>
+                    </div>
+
+                    <!-- Col 3: Date -->
+                    <div class="mt-4 lg:mt-0">
+                      <span class="text-xs font-medium text-gray-500 lg:hidden"
+                        >Date</span
+                      >
+                      <p
+                        class="text-sm text-gray-700 lg:text-gray-900"
+                        x-text="result.displayDate"
+                      ></p>
+                    </div>
+
+                    <!-- Col 4: Class Avg -->
+                    <div class="mt-4 lg:mt-0">
+                      <span class="text-xs font-medium text-gray-500 lg:hidden"
+                        >Class Avg</span
+                      >
+                      <p class="text-sm text-gray-700 lg:text-gray-900">
+                        <span x-text="result.classAverage"></span>
+                        <span
+                          class="text-gray-500"
+                          x-text="' / ' + result.totalPoints"
+                        ></span>
+                      </p>
+                    </div>
+
+                    <!-- Col 5: Score -->
+                    <div class="mt-4 lg:mt-0">
+                      <span class="text-xs font-medium text-gray-500 lg:hidden"
+                        >Score</span
+                      >
+                      <p class="text-sm font-medium text-gray-900">
+                        <span
+                          class="text-lg font-bold lg:text-sm"
+                          x-text="result.score"
+                        ></span>
+                        <span
+                          class="text-gray-500"
+                          x-text="' / ' + result.totalPoints"
+                        ></span>
+                      </p>
+                    </div>
+
+                    <!-- Col 6: Grade -->
+                    <div class="mt-4 lg:mt-0">
+                      <span class="text-xs font-medium text-gray-500 lg:hidden"
+                        >Grade</span
+                      >
+                      <div>
+                        <span
+                          class="text-xs font-semibold px-2.5 py-0.5 rounded-full"
+                          :class="result.gradePillClasses"
+                          x-text="result.grade"
+                        ></span>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </template>
+
+            <!-- No Results Message -->
+            <template
+              x-if="!isLoading && !error && filteredResults.length === 0"
+            >
+              <!-- ... (no results HTML remains the same) ... -->
+            </template>
+
+            <!-- Details Modal -->
+            <template x-if="selectedResult">
+              <div
+                x-show="isModalOpen"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="fixed inset-0 bg-black/50 z-40 print-hide"
+                @click="closeModal"
+                x-cloak
+              ></div>
+            </template>
+
+            <template x-if="selectedResult">
+              <div
+                x-show="isModalOpen"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                class="fixed inset-0 flex items-center justify-center p-4 z-50 print-hide"
+                @click.stop
+                x-cloak
+              >
+                <div
+                  class="bg-white rounded-lg shadow-xl max-w-lg w-full overflow-hidden"
+                  @click.stop
+                >
+                  <!-- Modal Header -->
+                  <div class="p-4 sm:p-5 border-b">
+                    <h3
+                      class="text-lg font-semibold text-gray-900"
+                      x-text="selectedResult.subject"
+                    ></h3>
+                    <p
+                      class="text-sm text-gray-600"
+                      x-text="selectedResult.examName"
+                    ></p>
+                    <button
+                      @click="closeModal"
+                      class="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+                    >
+                      <svg
+                        class="w-6 h-6"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <!-- Modal Body -->
+                  <div
+                    class="p-4 sm:p-5 space-y-6 max-h-[70vh] overflow-y-auto"
+                  >
+                    <!-- Score & Grade -->
+                    <div class="text-center bg-gray-50 rounded-lg p-4">
+                      <span class="text-xs font-medium text-gray-500"
+                        >Grade</span
+                      >
+                      <div class="flex items-center justify-center space-x-2">
+                        <span
+                          class="text-4xl font-bold text-gray-900"
+                          x-text="selectedResult.score"
+                        ></span>
+                        <span
+                          class="text-xl text-gray-500"
+                          x-text="'/ ' + selectedResult.totalPoints"
+                        ></span>
+                        <span
+                          class="text-2xl font-semibold"
+                          :class="selectedResult.gradeColorForText"
+                          x-text="'(' + selectedResult.grade + ')'"
+                        ></span>
+                      </div>
+                    </div>
+
+                    <!-- Details Grid -->
+                    <dl class="grid grid-cols-2 gap-4">
+                      <div>
+                        <dt class="text-sm font-medium text-gray-500">
+                          Class Average
+                        </dt>
+                        <dd
+                          class="text-base font-medium text-gray-900"
+                          x-text="selectedResult.classAverage + ' / ' + selectedResult.totalPoints"
+                        ></dd>
+                      </div>
+                      <div>
+                        <dt class="text-sm font-medium text-gray-500">
+                          Class Rank
+                        </dt>
+                        <dd
+                          class="text-base font-medium text-gray-900"
+                          x-text="selectedResult.rank"
+                        ></dd>
+                      </div>
+                    </dl>
+
+                    <!-- Breakdown -->
+                    <div>
+                      <h4 class="text-sm font-semibold text-gray-900 mb-2">
+                        Score Breakdown
+                      </h4>
+                      <ul class="divide-y divide-gray-200 border rounded-md">
+                        <template
+                          x-for="item in selectedResult.breakdown"
+                          :key="item.section"
+                        >
+                          <li
+                            class="flex justify-between items-center px-3 py-2"
+                          >
+                            <span
+                              class="text-sm text-gray-700"
+                              x-text="item.section"
+                            ></span>
+                            <span
+                              class="text-sm font-medium text-gray-900"
+                              x-text="item.score + ' / ' + item.total"
+                            ></span>
+                          </li>
+                        </template>
+                      </ul>
+                    </div>
+
+                    <!-- Comments -->
+                    <div>
+                      <h4 class="text-sm font-semibold text-gray-900 mb-2">
+                        Instructor Comments
+                      </h4>
+                      <div
+                        class="prose prose-sm max-w-none text-gray-600 bg-gray-50 rounded-md p-3"
+                      >
+                        <p x-text="selectedResult.comments"></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Modal Footer -->
+                  <div class="p-4 bg-gray-50 border-t text-right">
+                    <button
+                      @click="closeModal"
+                      class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- JavaScript Block -->
+    <script>
+      function examResultsData() {
+        return {
+          isLoading: true,
+          error: null,
+          selectedSemester: "Fall 2023", // Default to most recent
+          allSemesters: ["Fall 2023", "Spring 2023"],
+          isModalOpen: false,
+          selectedResult: null,
+          chartInstance: null, // REMOVED: To hold the chart object
+          chartInstance: null, // NEW: To hold the chart object
+
+          // --- MOCK DATA ---
+          allResults: [
+            {
+              id: 1,
+              subject: "Advanced Mathematics",
+              examName: "Midterm Exam",
+              date: "2023-10-15",
+              score: 88,
+              totalPoints: 100,
+              grade: "B+",
+              semester: "Fall 2023",
+              classAverage: 82,
+              rank: "10th / 50",
+              breakdown: [
+                { section: "Section A: Multiple Choice", score: 40, total: 40 },
+                { section: "Section B: Short Answer", score: 30, total: 40 },
+                { section: "Section C: Proofs", score: 18, total: 20 },
+              ],
+              comments:
+                "Great work on the proofs section, Emily. Be sure to review the chain rule for derivatives in Section B.",
+            },
+            {
+              id: 2,
+              subject: "Physics II",
+              examName: "Final Exam",
+              date: "2023-12-05",
+              score: 92,
+              totalPoints: 100,
+              grade: "A-",
+              semester: "Fall 2023",
+              classAverage: 85,
+              rank: "5th / 45",
+              breakdown: [
+                { section: "Multiple Choice", score: 45, total: 50 },
+                { section: "Problem Solving", score: 47, total: 50 },
+              ],
+              comments:
+                "Excellent performance. Your problem-solving skills are top-notch. A well-deserved A-.",
+            },
+            {
+              id: 3,
+              subject: "Data Structures",
+              examName: "Midterm Exam",
+              date: "2023-10-16",
+              score: 78,
+              totalPoints: 100,
+              grade: "C+",
+              semester: "Fall 2023",
+              classAverage: 75,
+              rank: "22nd / 60",
+              breakdown: [
+                { section: "Concepts", score: 38, total: 50 },
+                { section: "Implementation", score: 40, total: 50 },
+              ],
+              comments:
+                "Solid understanding of the concepts. Your implementation of the BST had a minor bug in the delete function, which cost you some points. See my notes.",
+            },
+            {
+              id: 4,
+              subject: "World History",
+              examName: "Final Exam",
+              date: "2023-05-10",
+              score: 85,
+              totalPoints: 100,
+              grade: "B",
+              semester: "Spring 2023",
+              classAverage: 80,
+              rank: "15th / 55",
+              breakdown: [
+                { section: "Essay 1", score: 40, total: 50 },
+                { section: "Essay 2", score: 45, total: 50 },
+              ],
+              comments:
+                "Good analysis in both essays. Try to incorporate more primary sources next time to elevate your arguments.",
+            },
+            {
+              id: 5,
+              subject: "English Literature",
+              examName: "Final Exam",
+              date: "2023-05-12",
+              score: 95,
+              totalPoints: 100,
+              grade: "A",
+              semester: "Spring 2023",
+              classAverage: 88,
+              rank: "3rd / 50",
+              breakdown: [
+                { section: "Analysis Paper", score: 50, total: 50 },
+                { section: "Short Answer", score: 45, total: 50 },
+              ],
+              comments:
+                "Fantastic work, Emily. Your analysis paper was one of the best in the class. Insightful and well-written.",
+            },
+            {
+              id: 6,
+              subject: "Physics II",
+              examName: "Midterm Exam",
+              date: "2023-03-10",
+              score: 68,
+              totalPoints: 100,
+              grade: "D+",
+              semester: "Spring 2023",
+              classAverage: 72,
+              rank: "35th / 45",
+              breakdown: [
+                { section: "Multiple Choice", score: 30, total: 50 },
+                { section: "Problem Solving", score: 38, total: 50 },
+              ],
+              comments:
+                "You seem to be struggling with the core concepts of magnetism. Please come to office hours so we can go over this before the final.",
+            },
+          ],
+
+          // --- LIFECYCLE ---
+          init() {
+            // Simulate fetching data
+            setTimeout(() => {
+              this.isLoading = false;
+              // REMOVED: Chart rendering logic on init
+            }, 1000);
+
+            // REMOVED: $watch for filteredResults to update chart
+          },
+
+          // --- HELPERS ---
+          getGpaPoint(grade) {
+            const gpaMap = {
+              "A+": 4.0,
+              A: 4.0,
+              "A-": 3.7,
+              "B+": 3.3,
+              B: 3.0,
+              "B-": 2.7,
+              "C+": 2.3,
+              C: 2.0,
+              "C-": 1.7,
+              "D+": 1.3,
+              D: 1.0,
+              "D-": 0.7,
+              F: 0.0,
+            };
+            return gpaMap[grade] || 0.0;
+          },
+
+          getGradePillClasses(grade) {
+            if (grade.startsWith("A")) return "bg-green-100 text-green-800";
+            if (grade.startsWith("B")) return "bg-blue-100 text-blue-800";
+            if (grade.startsWith("C")) return "bg-yellow-100 text-yellow-800";
+            if (grade.startsWith("D")) return "bg-orange-100 text-orange-800";
+            if (grade.startsWith("F")) return "bg-red-100 text-red-800";
+            return "bg-gray-100 text-gray-800";
+          },
+
+          getGradeTextColor(grade) {
+            if (grade.startsWith("A")) return "text-green-600";
+            if (grade.startsWith("B")) return "text-blue-600";
+            if (grade.startsWith("C")) return "text-yellow-600";
+            if (grade.startsWith("D")) return "text-orange-600";
+            if (grade.startsWith("F")) return "text-red-600";
+            return "text-gray-600";
+          },
+
+          // --- REMOVED: renderChart() method ---
+          // --- NEW CHART & PRINT METHODS ---
+          printPage() {
+            window.print();
+          },
+
+          renderChart(results) {
+            if (results.length === 0) {
+              if (this.chartInstance) {
+                this.chartInstance.destroy();
+                this.chartInstance = null;
+              }
+              return;
+            }
+
+            const ctx = document.getElementById("resultsChart");
+            if (!ctx) return; // Don't run if canvas not visible
+
+            if (this.chartInstance) {
+              this.chartInstance.destroy();
+            }
+
+            // We want to show the most recent exams, but the data is sorted new-to-old.
+            // For a bar chart, we should reverse this to show old-to-new (top-to-bottom).
+            const displayResults = [...results].reverse();
+
+            const labels = displayResults.map(
+              (r) => r.subject + " (" + r.examName.split(" ")[0] + ")"
+            );
+            const studentScores = displayResults.map(
+              (r) => (r.score / r.totalPoints) * 100
+            );
+            const classAverages = displayResults.map(
+              (r) => (r.classAverage / r.totalPoints) * 100
+            );
+
+            this.chartInstance = new Chart(ctx.getContext("2d"), {
+              type: "bar",
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    label: "Your Score",
+                    data: studentScores,
+                    backgroundColor: "#4F46E5", // primary.DEFAULT
+                    borderColor: "#4F46E5",
+                    borderWidth: 1,
+                  },
+                  {
+                    label: "Class Average",
+                    data: classAverages,
+                    backgroundColor: "#D1D5DB", // gray-300
+                    borderColor: "#D1D5DB",
+                    borderWidth: 1,
+                  },
+                ],
+              },
+              options: {
+                indexAxis: "y", // Horizontal bar chart
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  x: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                      callback: function (value) {
+                        return value + "%";
+                      },
+                    },
+                  },
+                  y: {
+                    ticks: {
+                      autoSkip: false,
+                      font: { size: 10 },
+                    },
+                  },
+                },
+                plugins: {
+                  legend: {
+                    position: "bottom",
+                    align: "start",
+                    labels: {
+                      boxWidth: 12,
+                      font: { size: 12 },
+                    },
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function (context) {
+                        return (
+                          context.dataset.label +
+                          ": " +
+                          context.formattedValue +
+                          "%"
+                        );
+                      },
+                    },
+                  },
+                },
+              },
+            });
+          },
+
+          // --- COMPUTED PROPERTIES ---
+          get formattedResults() {
+            return this.allResults
+              .map((result) => {
+                const date = new Date(result.date + "T00:00:00");
+                return {
+                  ...result,
+                  displayDate: date.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  }),
+                  gradePillClasses: this.getGradePillClasses(result.grade),
+                  gradeColorForText: this.getGradeTextColor(result.grade),
+                };
+              })
+              .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by most recent first
+          },
+
+          get filteredResults() {
+            let filtered = this.formattedResults;
+
+            // Filter by Semester
+            if (this.selectedSemester !== "All") {
+              filtered = filtered.filter(
+                (result) => result.semester === this.selectedSemester
+              );
+            }
+
+            return filtered;
+          },
+
+          get summaryData() {
+            const results = this.filteredResults;
+            if (results.length === 0) {
+              return { average: "N/A", gpa: "N/A" };
+            }
+
+            const totalScore = results.reduce((sum, r) => sum + r.score, 0);
+            const totalPoints = results.reduce(
+              (sum, r) => sum + r.totalPoints,
+              0
+            );
+            const average =
+              totalPoints > 0
+                ? ((totalScore / totalPoints) * 100).toFixed(1)
+                : "N/A";
+
+            const totalGpaPoints = results.reduce(
+              (sum, r) => sum + this.getGpaPoint(r.grade),
+              0
+            );
+            const gpa = (totalGpaPoints / results.length).toFixed(2);
+
+            return { average, gpa };
+          },
+
+          // --- MODAL FUNCTIONS ---
+          openModal(resultId) {
+            const foundResult = this.formattedResults.find(
+              (r) => r.id === resultId
+            );
+            if (foundResult) {
+              this.selectedResult = foundResult;
+              this.isModalOpen = true;
+            }
+          },
+
+          closeModal() {
+            this.isModalOpen = false;
+            // Delay clearing to allow for exit animation
+            setTimeout(() => {
+              this.selectedResult = null;
+            }, 300);
+          },
+        };
+      }
+
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("examResultsData", examResultsData);
+      });
+    </script>
+  </body>
+</html>

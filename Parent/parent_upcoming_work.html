@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upcoming Work - Parent Portal</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                DEFAULT: "#4F46E5", // Indigo-600
+                hover: "#4338CA", // Indigo-700
+              },
+              danger: "#DC2626", // Red-600
+              warning: "#D97706", // Amber-600
+              success: "#10B981", // Emerald-500
+            },
+          },
+        },
+      };
+    </script>
+
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <style>
+      /* Simple scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+      }
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body class="font-sans bg-gray-50">
+    <div
+      x-data="{ sidebarOpen: window.innerWidth > 1024, profileOpen: false, notificationOpen: false }"
+      class="flex h-screen bg-gray-100"
+    >
+      <div
+        x-show="sidebarOpen"
+        @click="sidebarOpen = false"
+        class="fixed inset-0 bg-black/50 z-30 lg:hidden"
+        x-cloak
+      ></div>
+
+      <aside
+        class="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-white border-r transition-transform duration-300 transform"
+        :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+      >
+        <div class="h-24 flex items-center justify-center border-b">
+          <div class="flex flex-col items-center text-center p-4">
+            <img
+              class="h-14 w-14 rounded-full"
+              src="https://placehold.co/100x100/FEF3C7/9A3412?text=SJ"
+              alt="Sarah Johnson"
+            />
+            <h3 class="text-sm font-semibold text-gray-800 mt-2">
+              Sarah Johnson
+            </h3>
+            <span class="text-xs text-gray-500">Parent ID: PAR45678</span>
+          </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="py-4">
+            <li class="px-4">
+              <a
+                href="parent_dashboard.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2.5a.5.5 0 01.5-.5h3a.5.5 0 01.5.5V17a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Dashboard</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="my_children.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">My Children</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="parent_gradebook.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.004-.002l.004-.002l.003-.001l.002-.001l.002-.001L10.394 3.2l.002.001l.002.001l.003.001l.004.002l.004.002a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+                  />
+                  <path
+                    d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+                  />
+                  <path
+                    d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Gradesook</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="parent_upcoming_work.html"
+                class="flex items-center px-4 py-3 bg-primary text-white rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm3 0a1 1 0 000 2h.01a1 1 0 100-2H13z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Upcoming work</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="parent_announcements.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10 3.5A1.5 1.5 0 0111.5 5v1.615a.75.75 0 00.416.678l.49.245a1.5 1.5 0 01.894 1.368V10.5A1.5 1.5 0 0113 12h-1.5a.75.75 0 00-.75.75v1.315a1.5 1.5 0 01-1.5 1.435h-1.5A1.5 1.5 0 016 14.065V12.75A.75.75 0 005.25 12H3.75a1.5 1.5 0 01-1.5-1.5V9.406a1.5 1.5 0 01.894-1.368l.49-.245A.75.75 0 004 7.115V5A1.5 1.5 0 015.5 3.5h3A1.5 1.5 0 0110 3.5zM8.5 5V3.5h-3A.5.5 0 005 4v3.115a2.25 2.25 0 01-1.342 2.052l-.49.245A.5.5 0 003 9.806V10.5a.5.5 0 00.5.5H5a.75.75 0 01.75.75v1.315a.5.5 0 00.5.485h1.5a.5.5 0 00.5-.485V12.75A.75.75 0 019 12h1.5a.5.5 0 00.5-.5V9.806a.5.5 0 00-.158-.399l-.49-.245a2.25 2.25 0 01-1.342-2.052V5h-1.5z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Announcements</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="border-t p-4">
+          <a
+            href="#settings"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+          >
+            <svg
+              class="w-5 h-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.835 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.835 2.942-.734 2.106-2.106a1.533 1.533 0 01-.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.835-1.372-.734-2.942-2.106-2.106A1.532 1.532 0 0111.49 3.17zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="ml-3 font-medium">Settings</span>
+          </a>
+        </div>
+      </aside>
+
+      <div
+        class="flex-1 flex flex-col overflow-hidden transition-all duration-300"
+        :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'"
+      >
+        <header
+          class="h-16 flex items-center justify-between bg-white border-b px-6"
+        >
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="text-gray-600 hover:text-gray-800"
+          >
+            <svg
+              class="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+
+          <div x-data="headerController" class="hidden sm:block">
+            <label for="activeChild" class="sr-only">Select Child</label>
+            <select
+              id="activeChild"
+              x-model="selectedChildId"
+              @change="updateGlobalChild(selectedChildId)"
+              class="block w-48 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+            >
+              <option value="1">Viewing: Emily</option>
+              <option value="2">Viewing: Michael</option>
+            </select>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <div class="relative" x-data="{ open: false }">
+              <button
+                @click="open = !open; profileOpen = false"
+                class="text-gray-600 hover:text-gray-800 relative"
+              >
+                <svg
+                  class="w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.017 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                  />
+                </svg>
+                <span
+                  class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"
+                ></span>
+              </button>
+              <div
+                x-show="open"
+                @click.away="open = false"
+                x-cloak
+                x-transition
+                class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl overflow-hidden z-10"
+              >
+                <div class="p-4 border-b">
+                  <h3 class="font-semibold text-gray-800">Notifications</h3>
+                </div>
+                <div class="divide-y max-h-80 overflow-y-auto">
+                  <a href="#" class="flex p-4 hover:bg-gray-50">
+                    <div class="flex-shrink-0 mr-3">
+                      <div
+                        class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            d="M2 4a2 2 0 012-2h12a2 2 0 012 2v1H2V4zM2 7v1h16V7H2zm0 3v1h16v-1H2zm0 3v1h16v-1H2zm0 3v1a2 2 0 002 2h12a2 2 0 002-2v-1H2z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-800">Fee Payment Due</p>
+                      <p class="text-xs text-gray-500">2 days ago</p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="relative" x-data="{ open: false }">
+              <button
+                @click="open = !open; notificationOpen = false"
+                class="flex items-center space-x-2"
+              >
+                <span class="text-sm font-medium text-gray-800 hidden sm:block"
+                  >Sarah Johnson</span
+                >
+                <svg
+                  class="w-4 h-4 text-gray-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+              <div
+                x-show="open"
+                @click.away="open = false"
+                x-cloak
+                x-transition
+                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl overflow-hidden z-10"
+              >
+                <a
+                  href="#logout"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >Logout</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main
+          class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 sm:p-6"
+          x-data="upcomingWorkPage"
+          @child-changed.window="changeChild($event.detail)"
+        >
+          <div class="max-w-5xl mx-auto">
+            <div
+              class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4"
+            >
+              <div>
+                <h1 class="text-2xl font-semibold text-gray-900">
+                  Upcoming Work
+                </h1>
+                <p
+                  class="text-sm text-gray-500 mt-1"
+                  x-text="`Showing assignments and exams for ${currentChild.name}`"
+                ></p>
+              </div>
+
+              <div class="flex gap-3 w-full sm:w-auto">
+                <select
+                  x-model="filterSubject"
+                  class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                >
+                  <option value="all">All Subjects</option>
+                  <template
+                    x-for="subject in currentChild.subjects"
+                    :key="subject"
+                  >
+                    <option :value="subject" x-text="subject"></option>
+                  </template>
+                </select>
+                <select
+                  x-model="filterType"
+                  class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                >
+                  <option value="all">All Types</option>
+                  <option value="Assignment">Assignments</option>
+                  <option value="Exam">Exams</option>
+                  <option value="Project">Projects</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="space-y-8">
+              <div x-show="groupedWork.overdue.length > 0" x-cloak>
+                <h2
+                  class="text-lg font-semibold text-red-600 mb-3 flex items-center"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  Missing / Overdue
+                </h2>
+                <div class="space-y-3">
+                  <template x-for="item in groupedWork.overdue" :key="item.id">
+                    <div
+                      class="bg-white border-l-4 border-red-500 rounded-r-lg shadow-sm p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center"
+                    >
+                      <div>
+                        <div class="flex items-center gap-2 mb-1">
+                          <span
+                            class="text-xs font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 uppercase tracking-wide"
+                            x-text="item.type"
+                          ></span>
+                          <span
+                            class="text-sm text-gray-500"
+                            x-text="item.subject"
+                          ></span>
+                        </div>
+                        <h3
+                          class="text-lg font-bold text-gray-900"
+                          x-text="item.title"
+                        ></h3>
+                        <p
+                          class="text-sm text-red-600 font-medium mt-1"
+                          x-text="`Due: ${item.dueDate}`"
+                        ></p>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <div>
+                <h2 class="text-lg font-semibold text-gray-900 mb-3">
+                  Due This Week
+                </h2>
+                <div class="space-y-3">
+                  <template x-for="item in groupedWork.thisWeek" :key="item.id">
+                    <div
+                      class="bg-white border-l-4 border-yellow-400 rounded-r-lg shadow-sm p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center hover:shadow-md transition-shadow"
+                    >
+                      <div>
+                        <div class="flex items-center gap-2 mb-1">
+                          <span
+                            class="text-xs font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600 uppercase tracking-wide"
+                            x-text="item.type"
+                          ></span>
+                          <span
+                            class="text-sm text-gray-500"
+                            x-text="item.subject"
+                          ></span>
+                        </div>
+                        <h3
+                          class="text-base font-bold text-gray-900"
+                          x-text="item.title"
+                        ></h3>
+                        <p class="text-sm text-gray-600 mt-1 flex items-center">
+                          <svg
+                            class="w-4 h-4 mr-1 text-gray-400"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.415L11 9.586V6z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                          <span x-text="item.dueDate"></span>
+                        </p>
+                      </div>
+                      <div class="mt-3 sm:mt-0 flex items-center gap-2">
+                        <span
+                          class="text-sm font-medium text-yellow-600 bg-yellow-50 px-3 py-1 rounded-full"
+                          >Due Soon</span
+                        >
+                      </div>
+                    </div>
+                  </template>
+                  <div
+                    x-show="groupedWork.thisWeek.length === 0"
+                    class="text-center py-8 bg-white rounded-lg border border-dashed border-gray-300"
+                  >
+                    <p class="text-gray-500 text-sm">
+                      No work due this week! 🎉
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h2 class="text-lg font-semibold text-gray-900 mb-3">
+                  Upcoming
+                </h2>
+                <div class="space-y-3">
+                  <template x-for="item in groupedWork.upcoming" :key="item.id">
+                    <div
+                      class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center"
+                    >
+                      <div>
+                        <div class="flex items-center gap-2 mb-1">
+                          <span
+                            class="text-xs font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600 uppercase tracking-wide"
+                            x-text="item.type"
+                          ></span>
+                          <span
+                            class="text-sm text-gray-500"
+                            x-text="item.subject"
+                          ></span>
+                        </div>
+                        <h3
+                          class="text-base font-medium text-gray-900"
+                          x-text="item.title"
+                        ></h3>
+                        <p
+                          class="text-sm text-gray-500 mt-1"
+                          x-text="`Due: ${item.dueDate}`"
+                        ></p>
+                      </div>
+                    </div>
+                  </template>
+                  <div
+                    x-show="groupedWork.upcoming.length === 0"
+                    class="text-center py-8 bg-white rounded-lg border border-dashed border-gray-300"
+                  >
+                    <p class="text-gray-500 text-sm">
+                      No upcoming work scheduled yet.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      // Header Controller to dispatch events when child changes
+      function headerController() {
+        return {
+          selectedChildId: "1",
+          updateGlobalChild(id) {
+            // Dispatch a custom event to notify other components
+            window.dispatchEvent(
+              new CustomEvent("child-changed", { detail: id })
+            );
+          },
+        };
+      }
+
+      function upcomingWorkPage() {
+        return {
+          activeChildId: "1",
+          filterSubject: "all",
+          filterType: "all",
+
+          // Database of all data
+          db: {
+            1: {
+              // Emily
+              name: "Emily Johnson",
+              subjects: [
+                "Mathematics",
+                "World History",
+                "Physics II",
+                "Computer Science",
+              ],
+              work: [
+                {
+                  id: 1,
+                  title: "Calculus Problem Set",
+                  subject: "Mathematics",
+                  type: "Assignment",
+                  dueDate: "Tomorrow, 11:59 PM",
+                  status: "week",
+                },
+                {
+                  id: 2,
+                  title: "Renaissance Essay Draft",
+                  subject: "World History",
+                  type: "Assignment",
+                  dueDate: "Dec 12, 2023",
+                  status: "week",
+                },
+                {
+                  id: 3,
+                  title: "Physics Midterm",
+                  subject: "Physics II",
+                  type: "Exam",
+                  dueDate: "Dec 15, 2023",
+                  status: "upcoming",
+                },
+                {
+                  id: 4,
+                  title: "Lab Report 3",
+                  subject: "Physics II",
+                  type: "Assignment",
+                  dueDate: "Nov 28, 2023",
+                  status: "overdue",
+                },
+                {
+                  id: 5,
+                  title: "Algorithm Quiz",
+                  subject: "Computer Science",
+                  type: "Exam",
+                  dueDate: "Dec 20, 2023",
+                  status: "upcoming",
+                },
+              ],
+            },
+            2: {
+              // Michael
+              name: "Michael Johnson",
+              subjects: ["English", "Science", "Art", "Math 8"],
+              work: [
+                {
+                  id: 101,
+                  title: "Book Report: The Giver",
+                  subject: "English",
+                  type: "Assignment",
+                  dueDate: "Today",
+                  status: "week",
+                },
+                {
+                  id: 102,
+                  title: "Science Fair Proposal",
+                  subject: "Science",
+                  type: "Project",
+                  dueDate: "Nov 30, 2023",
+                  status: "overdue",
+                },
+                {
+                  id: 103,
+                  title: "Algebra Quiz",
+                  subject: "Math 8",
+                  type: "Exam",
+                  dueDate: "Dec 14, 2023",
+                  status: "upcoming",
+                },
+              ],
+            },
+          },
+
+          get currentChild() {
+            return this.db[this.activeChildId];
+          },
+
+          // Listener for the header dropdown
+          changeChild(id) {
+            this.activeChildId = id;
+          },
+
+          get groupedWork() {
+            // 1. Get all items for current child
+            let items = this.currentChild.work;
+
+            // 2. Apply Filters
+            if (this.filterSubject !== "all") {
+              items = items.filter((i) => i.subject === this.filterSubject);
+            }
+            if (this.filterType !== "all") {
+              items = items.filter((i) => i.type === this.filterType);
+            }
+
+            // 3. Group by Status
+            return {
+              overdue: items.filter((i) => i.status === "overdue"),
+              thisWeek: items.filter((i) => i.status === "week"),
+              upcoming: items.filter((i) => i.status === "upcoming"),
+            };
+          },
+        };
+      }
+
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("headerController", headerController);
+        Alpine.data("upcomingWorkPage", upcomingWorkPage);
+      });
+    </script>
+  </body>
+</html>

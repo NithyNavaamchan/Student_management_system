@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assignment Detail</title>
+
+    <!-- Tailwind CSS Script -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+    <!-- Custom Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                DEFAULT: "#4F46E5", // Indigo-600
+                hover: "#4338CA", // Indigo-700
+              },
+            },
+            animation: {
+              pulse: "pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Alpine.js -->
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <style>
+      /* Simple scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+      }
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body class="font-sans bg-gray-50">
+    <div
+      x-data="{ sidebarOpen: window.innerWidth > 1024, profileOpen: false, notificationOpen: false }"
+      class="flex h-screen bg-gray-100"
+    >
+      <!-- Sidebar Overlay (Mobile) -->
+      <div
+        x-show="sidebarOpen"
+        @click="sidebarOpen = false"
+        class="fixed inset-0 bg-black/50 z-30 lg:hidden"
+        x-cloak
+      ></div>
+
+      <!-- Sidebar -->
+      <aside
+        class="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-white border-r transition-transform duration-300 transform"
+        :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+      >
+        <!-- Sidebar Header -->
+        <div class="h-24 flex items-center justify-center border-b">
+          <div class="flex flex-col items-center text-center p-4">
+            <img
+              class="h-14 w-14 rounded-full"
+              src="https://placehold.co/100x100/E2E8F0/4A5568?text=EJ"
+              alt="Emily Johnson"
+            />
+            <h3 class="text-sm font-semibold text-gray-800 mt-2">
+              Emily Johnson
+            </h3>
+            <span class="text-xs text-gray-500">ID: STU2023456</span>
+          </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="py-4">
+            <li class="px-4">
+              <a
+                href="student_dashboard.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <!-- Heroicon: home -->
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2.5a.5.5 0 01.5-.5h3a.5.5 0 01.5.5V17a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Dashboard</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="student_assignments.html"
+                class="flex items-center px-4 py-3 bg-primary text-white rounded-lg"
+              >
+                <!-- Heroicon: clipboard-list -->
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm3 0a1 1 0 000 2h.01a1 1 0 100-2H13z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Assignments</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="#ebooks"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <!-- Heroicon: book-open -->
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3.49 2.22A2.25 2.25 0 001.25 4.5v11A2.25 2.25 0 003.5 17.75h13A2.25 2.25 0 0018.75 15.5v-11A2.25 2.25 0 0016.5 2.22H3.49zM2.75 4.5c0-.69.56-1.25 1.25-1.25h12c.69 0 1.25.56 1.25 1.25v11c0 .69-.56 1.25-1.25 1.25h-12c-.69 0-1.25-.56-1.25-1.25v-11z"
+                    clip-rule="evenodd"
+                  />
+                  <path
+                    d="M10 4.25a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5a.75.75 0 01.75-.75z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 8.854l-3.03 3.03a.75.75 0 001.06 1.06L10 10.97l2.97 2.97a.75.75 0 001.06-1.06L11.061 8.854 10 7.793l-1.061 1.06z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Resources</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="student_exam_results.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <!-- Heroicon: academic-cap -->
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.004-.002l.004-.002l.003-.001l.002-.001l.002-.001L10.394 3.2l.002.001l.002.001l.003.001l.004.002l.004.002a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+                  />
+                  <path
+                    d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+                  />
+                  <path
+                    d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exam Results</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="student_exam_schedule.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <!-- Heroicon: calendar -->
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exam Schedule</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="border-t p-4">
+          <span class="ml-3 font-medium">VTN</span>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <div
+        class="flex-1 flex flex-col overflow-hidden transition-all duration-300"
+        :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'"
+      >
+        <!-- Top bar -->
+        <header
+          class="h-16 flex items-center justify-between bg-white border-b px-6"
+        >
+          <!-- ... (same as previous file's header) ... -->
+          <!-- Sidebar Toggle -->
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="text-gray-600 hover:text-gray-800"
+          >
+            <svg
+              class="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+          <!-- Header Title (hidden on mobile) -->
+          <div class="hidden md:flex items-center">
+            <svg
+              class="w-6 h-6 text-primary"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+              />
+              <path
+                d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+              />
+              <path
+                d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+              />
+            </svg>
+            <h2 class="ml-2 text-lg font-semibold text-gray-800">
+              Student Management System
+            </h2>
+          </div>
+          <!-- Top bar right -->
+          <div class="flex items-center space-x-4">
+            <!-- (Same as previous file's notifications/profile) -->
+          </div>
+        </header>
+
+        <!-- Main content area -->
+        <main
+          class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 sm:p-6"
+        >
+          <div class="max-w-7xl mx-auto" x-data="assignmentDetailData">
+            <!-- Loading Skeleton -->
+            <template x-if="isLoading">
+              <div class="max-w-3xl mx-auto animate-pulse">
+                <div class="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+                <div class="h-8 sm:h-10 bg-gray-200 rounded w-3/4 mb-8"></div>
+                <div class="lg:grid lg:grid-cols-3 lg:gap-8">
+                  <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white rounded-lg shadow-sm p-6 space-y-4">
+                      <div class="h-6 bg-gray-200 rounded w-1/3"></div>
+                      <div class="h-4 bg-gray-200 rounded w-full"></div>
+                      <div class="h-4 bg-gray-200 rounded w-full"></div>
+                      <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm p-6 space-y-4">
+                      <div class="h-6 bg-gray-200 rounded w-1/3"></div>
+                      <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                      <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  </div>
+                  <div class="lg:col-span-1 mt-6 lg:mt-0">
+                    <div class="bg-white rounded-lg shadow-sm p-6 space-y-4">
+                      <div class="h-6 bg-gray-200 rounded w-1/2"></div>
+                      <div class="h-4 bg-gray-200 rounded w-full"></div>
+                      <div class="h-4 bg-gray-200 rounded w-full"></div>
+                      <div class="h-4 bg-gray-200 rounded w-full"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+
+            <!-- Error Message -->
+            <template x-if="error">
+              <div class="max-w-3xl mx-auto">
+                <a
+                  href="student_assignments.html"
+                  class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 mb-4"
+                >
+                  <svg
+                    class="w-5 h-5 mr-1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  Back to assignments
+                </a>
+                <div
+                  class="bg-red-50 border-l-4 border-red-400 p-4 rounded-md shadow-sm"
+                >
+                  <div class="flex">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-red-400"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <div class="ml-3">
+                      <h3 class="text-sm font-medium text-red-800">
+                        Error loading assignment
+                      </h3>
+                      <p class="mt-1 text-sm text-red-700" x-text="error"></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+
+            <!-- Assignment Content -->
+            <template x-if="!isLoading && !error && assignment">
+              <div class_="max-w-7xl mx-auto">
+                <!-- Page Header -->
+                <div class="mb-6">
+                  <a
+                    href="student_assignments.html"
+                    class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 mb-2"
+                  >
+                    <svg
+                      class="w-5 h-5 mr-1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    Back to assignments
+                  </a>
+                  <!-- RESPONSIVE TITLE: smaller on mobile, larger on desktop -->
+                  <h1
+                    class="text-2xl sm:text-3xl font-bold text-gray-900"
+                    x-text="assignment.title"
+                  ></h1>
+                </div>
+
+                <!-- Main Grid -->
+                <div class="lg:grid lg:grid-cols-3 lg:gap-8">
+                  <!-- Left Column: Details & Submission -->
+                  <div class="lg:col-span-2 space-y-6">
+                    <!-- Instructions -->
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                      <div class="p-5 sm:p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                          Instructions
+                        </h2>
+                        <div
+                          class="prose prose-sm max-w-none text-gray-600"
+                          x-html="assignment.instructions"
+                        ></div>
+                      </div>
+                    </div>
+
+                    <!-- Attachments -->
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                      <div class="p-5 sm:p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                          Attachments
+                        </h2>
+                        <ul class="space-y-3">
+                          <template
+                            x-for="file in assignment.attachments"
+                            :key="file.name"
+                          >
+                            <li class="flex items-center">
+                              <a
+                                :href="file.url"
+                                target="_blank"
+                                class="flex items-center text-sm font-medium text-primary hover:text-primary-hover p-3 bg-gray-50 rounded-lg w-full"
+                              >
+                                <svg
+                                  class="w-5 h-5 text-gray-400 mr-3"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243l7-7a.75.75 0 011.06-1.06l-7 7a1.5 1.5 0 01-2.12-2.122l7-7a.75.75 0 00-1.06-1.06z"
+                                    clip-rule="evenodd"
+                                  />
+                                </svg>
+                                <span
+                                  class="flex-1 truncate"
+                                  x-text="file.name"
+                                ></span>
+                                <svg
+                                  class="w-5 h-5 text-gray-500 ml-2"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v4.59L7.3 9.7a.75.75 0 00-1.1 1.02l3.25 3.5a.75.75 0 001.1 0l3.25-3.5a.75.75 0 10-1.1-1.02l-1.95 2.1V6.75z"
+                                    clip-rule="evenodd"
+                                  />
+                                </svg>
+                              </a>
+                            </li>
+                          </template>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <!-- Submission Box (Conditional) -->
+                    <template
+                      x-if="assignment.status === 'Pending' || assignment.status === 'Overdue'"
+                    >
+                      <div
+                        class="bg-white rounded-lg shadow-sm overflow-hidden"
+                      >
+                        <div class="p-5 sm:p-6">
+                          <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                            Submit Your Assignment
+                          </h2>
+                          <div class="space-y-4">
+                            <!-- File Upload -->
+                            <div>
+                              <label
+                                for="file-upload"
+                                class="block text-sm font-medium text-gray-700"
+                                >Upload Files</label
+                              >
+                              <div
+                                @dragover.prevent
+                                @dragleave.prevent
+                                @drop.prevent="handleFileDrop($event)"
+                                class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
+                              >
+                                <div class="space-y-1 text-center">
+                                  <svg
+                                    class="mx-auto h-12 w-12 text-gray-400"
+                                    stroke="currentColor"
+                                    fill="none"
+                                    viewBox="0 0 48 48"
+                                    aria-hidden="true"
+                                  >
+                                    <path
+                                      d="M28 8H12a4 4 0 00-4 4v20m32-12v8a4 4 0 01-4 4H28m0-28v8a4 4 0 01-4 4H12m28 4l-4-4m0 0l-4 4m4-4v12"
+                                      stroke-width="2"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                  </svg>
+                                  <!-- RESPONSIVE FILE UPLOAD TEXT: Stacks on mobile -->
+                                  <div
+                                    class="flex flex-col sm:flex-row sm:justify-center text-sm text-gray-600"
+                                  >
+                                    <label
+                                      for="file-upload"
+                                      class="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-hover focus-within:outline-none"
+                                    >
+                                      <span>Upload files</span>
+                                      <input
+                                        id="file-upload"
+                                        name="file-upload"
+                                        type="file"
+                                        class="sr-only"
+                                        multiple
+                                        @change="handleFileInput($event)"
+                                      />
+                                    </label>
+                                    <p class="sm:pl-1">or drag and drop</p>
+                                  </div>
+                                  <p class="text-xs text-gray-500">
+                                    PNG, JPG, PDF up to 10MB
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- File List -->
+                            <template x-if="uploadedFiles.length > 0">
+                              <ul class="space-y-2">
+                                <template
+                                  x-for="file in uploadedFiles"
+                                  :key="file.name"
+                                >
+                                  <li
+                                    class="flex items-center justify-between p-2 bg-gray-50 rounded-md"
+                                  >
+                                    <span
+                                      class="text-sm font-medium text-gray-800 truncate"
+                                      x-text="file.name"
+                                    ></span>
+                                    <button
+                                      @click="removeFile(file.name)"
+                                      class="text-gray-400 hover:text-red-500"
+                                    >
+                                      <svg
+                                        class="w-4 h-4"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                      >
+                                        <path
+                                          fill-rule="evenodd"
+                                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                          clip-rule="evenodd"
+                                        />
+                                      </svg>
+                                    </button>
+                                  </li>
+                                </template>
+                              </ul>
+                            </template>
+                            <!-- Comments -->
+                            <div>
+                              <label
+                                for="comment"
+                                class="block text-sm font-medium text-gray-700"
+                                >Comments (Optional)</label
+                              >
+                              <div class="mt-1">
+                                <textarea
+                                  x-model="submissionComment"
+                                  rows="4"
+                                  name="comment"
+                                  id="comment"
+                                  class="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
+                                  placeholder="Add any comments for your instructor..."
+                                ></textarea>
+                              </div>
+                            </div>
+                            <!-- Submit Button -->
+                            <div class="text-right">
+                              <button
+                                @click="submitAssignment"
+                                :disabled="isSubmitting"
+                                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
+                              >
+                                <svg
+                                  x-show="isSubmitting"
+                                  class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle
+                                    class="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    stroke-width="4"
+                                  ></circle>
+                                  <path
+                                    class="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                  ></path>
+                                </svg>
+                                <span
+                                  x-text="isSubmitting ? 'Submitting...' : 'Submit Assignment'"
+                                ></span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+
+                    <!-- Submitted Info (Conditional) -->
+                    <template
+                      x-if="assignment.status === 'Submitted' || assignment.status === 'Graded'"
+                    >
+                      <div
+                        class="bg-white rounded-lg shadow-sm overflow-hidden"
+                      >
+                        <div class="p-5 sm:p-6">
+                          <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                            Your Submission
+                          </h2>
+                          <div
+                            class="flex items-center p-4 bg-blue-50 text-blue-700 rounded-md"
+                          >
+                            <svg
+                              class="w-5 h-5 mr-3"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clip-rule="evenodd"
+                              />
+                            </svg>
+                            <p class="text-sm font-medium">
+                              You submitted this assignment.
+                            </p>
+                          </div>
+                          <!-- In a real app, you'd list the submitted files here -->
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+
+                  <!-- Right Column: Status & Feedback -->
+                  <div class="lg:col-span-1 space-y-6 mt-6 lg:mt-0">
+                    <!-- Status Card -->
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                      <div class="p-5 sm:p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                          Details
+                        </h2>
+                        <dl class="space-y-3">
+                          <div class="flex justify-between items-center">
+                            <dt class="text-sm font-medium text-gray-500">
+                              Status
+                            </dt>
+                            <dd>
+                              <span
+                                class="text-xs font-semibold px-2.5 py-0.5 rounded-full"
+                                :class="{
+                                  'bg-yellow-100 text-yellow-800':
+                                    assignment.status === 'Pending',
+                                  'bg-red-100 text-red-800':
+                                    assignment.status === 'Overdue',
+                                  'bg-blue-100 text-blue-800':
+                                    assignment.status === 'Submitted',
+                                  'bg-green-100 text-green-800':
+                                    assignment.status === 'Graded',
+                                }"
+                                x-text="assignment.status"
+                              ></span>
+                            </dd>
+                          </div>
+                          <template x-if="assignment.grade !== null">
+                            <div class="flex justify-between items-center">
+                              <dt class="text-sm font-medium text-gray-500">
+                                Grade
+                              </dt>
+                              <dd
+                                class="text-sm font-bold text-green-600"
+                                x-text="assignment.grade + ' / ' + assignment.points"
+                              ></dd>
+                            </div>
+                          </template>
+                          <div class="flex justify-between items-center">
+                            <dt class="text-sm font-medium text-gray-500">
+                              Due Date
+                            </dt>
+                            <dd
+                              class="text-sm font-medium text-gray-800"
+                              x-text="assignment.dueDate"
+                            ></dd>
+                          </div>
+                          <div class="flex justify-between items-center">
+                            <dt class="text-sm font-medium text-gray-500">
+                              Subject
+                            </dt>
+                            <dd
+                              class="text-sm font-medium text-gray-800"
+                              x-text="assignment.subject"
+                            ></dd>
+                          </div>
+                          <div class="flex justify-between items-center">
+                            <dt class="text-sm font-medium text-gray-500">
+                              Points
+                            </dt>
+                            <dd
+                              class="text-sm font-medium text-gray-800"
+                              x-text="assignment.points"
+                            ></dd>
+                          </div>
+                        </dl>
+                      </div>
+                    </div>
+
+                    <!-- Feedback Card (Conditional) -->
+                    <template x-if="assignment.status === 'Graded'">
+                      <div
+                        class="bg-white rounded-lg shadow-sm overflow-hidden"
+                      >
+                        <div class="p-5 sm:p-6">
+                          <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                            Grade & Feedback
+                          </h2>
+                          <div class="text-center mb-4">
+                            <!-- RESPONSIVE GRADE: smaller on mobile, larger on desktop -->
+                            <span
+                              class="text-3xl sm:text-4xl font-bold text-green-600"
+                              x-text="assignment.grade"
+                            ></span>
+                            <span
+                              class="text-lg text-gray-500"
+                              x-text="'/ ' + assignment.points + ' pts'"
+                            ></span>
+                          </div>
+                          <div
+                            class="prose prose-sm max-w-none text-gray-600 bg-gray-50 rounded-md p-4"
+                            x-html="assignment.feedback"
+                          ></div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- JavaScript Block -->
+    <script>
+      function assignmentDetailData() {
+        return {
+          assignment: null,
+          isLoading: true,
+          error: null,
+          uploadedFiles: [],
+          submissionComment: "",
+          isSubmitting: false,
+
+          // This mock data is copied from the list page to find the assignment
+          allAssignments: [
+            {
+              id: 1,
+              subject: "Advanced Mathematics",
+              title: "Calculus Problem Set 1",
+              status: "Pending",
+              dueDate: "2023-12-10",
+              points: 100,
+              grade: null,
+              instructions:
+                "<p>Complete all problems in the attached PDF. Show all your work for full credit.</p><p>Topics covered: Derivatives, Integrals, and Limits.</p>",
+              attachments: [
+                {
+                  name: "calculus_problem_set_1.pdf",
+                  url: "#",
+                },
+                { name: "submission_guidelines.pdf", url: "#" },
+              ],
+              feedback: null,
+            },
+            {
+              id: 2,
+              subject: "Data Structures",
+              title: "Binary Tree Implementation",
+              status: "Pending",
+              dueDate: "2023-12-12",
+              points: 50,
+              grade: null,
+              instructions:
+                "<p>Implement a binary search tree (BST) in a language of your choice. Your implementation should include insert, delete, and search methods.</p>",
+              attachments: [{ name: "bst_requirements.txt", url: "#" }],
+              feedback: null,
+            },
+            {
+              id: 3,
+              subject: "Physics II",
+              title: "Lab Report: Optics",
+              status: "Submitted",
+              dueDate: "2023-12-05",
+              points: 75,
+              grade: null,
+              instructions:
+                "<p>Write a full lab report based on the optics experiment conducted in class. Include your hypothesis, methodology, results, and conclusion.</p>",
+              attachments: [{ name: "lab_report_template.docx", url: "#" }],
+              feedback: null,
+            },
+            {
+              id: 4,
+              subject: "World History",
+              title: "Renaissance Essay",
+              status: "Graded",
+              dueDate: "2023-12-01",
+              points: 100,
+              grade: 88,
+              instructions:
+                "<p>Write a 1500-word essay on the impact of the printing press on the European Renaissance.</p>",
+              attachments: [{ name: "essay_rubric.pdf", url: "#" }],
+              feedback:
+                "<p><strong>Great work, Emily!</strong></p><p>Your analysis of the printing press's role was thorough. You provided strong examples. Your argument could have been strengthened by discussing the counter-arguments or limitations of its impact more explicitly.</p><p>See minor grammar notes in the attached document.</p>",
+            },
+            {
+              id: 5,
+              subject: "Computer Science",
+              title: "Algorithm Analysis Homework",
+              status: "Pending",
+              dueDate: "2023-12-14",
+              points: 100,
+              grade: null,
+              instructions:
+                "<p>Analyze the time and space complexity for the given sorting algorithms.</p>",
+              attachments: [{ name: "algorithms_homework.pdf", url: "#" }],
+              feedback: null,
+            },
+            {
+              id: 6,
+              subject: "English Literature",
+              title: "Shakespeare Sonnet Analysis",
+              status: "Overdue",
+              dueDate: "2023-12-01",
+              points: 25,
+              grade: null,
+              instructions:
+                "<p>Choose one Shakespearean sonnet and write a 500-word analysis of its themes and literary devices.</p>",
+              attachments: [{ name: "sonnet_list.pdf", url: "#" }],
+              feedback: null,
+            },
+            {
+              id: 7,
+              subject: "Physics II",
+              title: "Wave Motion Problems",
+              status: "Graded",
+              dueDate: "2023-11-28",
+              points: 50,
+              grade: 45,
+              instructions:
+                "<p>Complete the problem set on wave motion and sound.</p>",
+              attachments: [{ name: "wave_problems.pdf", url: "#" }],
+              feedback:
+                "<p>Excellent work on the calculations. Be sure to double-check your units on question 4.</p>",
+            },
+          ],
+
+          init() {
+            this.fetchAssignmentDetails();
+          },
+
+          fetchAssignmentDetails() {
+            this.isLoading = true;
+            this.error = null;
+
+            // Get ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = parseInt(urlParams.get("id"));
+
+            // Simulate network delay
+            setTimeout(() => {
+              try {
+                if (!id) {
+                  throw new Error("No assignment ID provided.");
+                }
+
+                const foundAssignment = this.allAssignments.find(
+                  (a) => a.id === id
+                );
+
+                if (!foundAssignment) {
+                  throw new Error(
+                    "Assignment not found. It may have been deleted."
+                  );
+                }
+
+                // Format the date for display
+                const date = new Date(foundAssignment.dueDate + "T00:00:00");
+                this.assignment = {
+                  ...foundAssignment,
+                  dueDate: date.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  }),
+                };
+
+                this.isLoading = false;
+              } catch (e) {
+                this.error = e.message || "An unknown error occurred.";
+                this.isLoading = false;
+              }
+            }, 800); // Shorter delay for detail page
+          },
+
+          handleFileInput(event) {
+            this.addFiles(event.target.files);
+          },
+
+          handleFileDrop(event) {
+            this.addFiles(event.dataTransfer.files);
+          },
+
+          addFiles(files) {
+            for (let i = 0; i < files.length; i++) {
+              // Check for duplicates
+              if (!this.uploadedFiles.find((f) => f.name === files[i].name)) {
+                this.uploadedFiles.push(files[i]);
+              }
+            }
+          },
+
+          removeFile(fileName) {
+            this.uploadedFiles = this.uploadedFiles.filter(
+              (f) => f.name !== fileName
+            );
+          },
+
+          submitAssignment() {
+            if (this.isSubmitting) return;
+
+            this.isSubmitting = true;
+            console.log("Submitting assignment...");
+            console.log(
+              "Files:",
+              this.uploadedFiles.map((f) => f.name)
+            );
+            console.log("Comment:", this.submissionComment);
+
+            // Simulate submission delay
+            setTimeout(() => {
+              // Update the assignment's status in the UI
+              this.assignment.status = "Submitted";
+              this.isSubmitting = false;
+              // In a real app, you'd clear the uploadedFiles and comment
+              // after a successful submission.
+            }, 1500);
+          },
+        };
+      }
+
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("assignmentDetailData", assignmentDetailData);
+      });
+    </script>
+  </body>
+</html>

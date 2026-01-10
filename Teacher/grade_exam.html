@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      x-data="gradingExamPage()"
+      x-init="loadExamData()"
+      x-text="isGradedView ? `View Results: ${exam.title}` : `Grade Exam: ${exam.title}`"
+    >
+      Grade Exam
+    </title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                DEFAULT: "#4F46E5", // Indigo-600
+                hover: "#4338CA", // Indigo-700
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <style>
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+      }
+      [x-cloak] {
+        display: none !important;
+      }
+
+      /* Make the grade input box smaller */
+      .grade-input {
+        max-width: 90px;
+      }
+      .grade-input:disabled {
+        background: #f3f4f6;
+        cursor: not-allowed;
+      }
+      .status-select:disabled {
+        background: #f3f4f6;
+        border: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        padding-right: 0.5rem;
+      }
+    </style>
+  </head>
+  <body class="font-sans bg-gray-50">
+    <div
+      x-data="{ sidebarOpen: window.innerWidth > 1024, profileOpen: false, notificationOpen: false }"
+      class="flex h-screen bg-gray-100"
+    >
+      <aside
+        class="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-white border-r transition-transform duration-300 transform"
+        :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+      >
+        <div class="h-24 flex items-center justify-center border-b">
+          <div class="flex flex-col items-center text-center p-4">
+            <img
+              class="h-14 w-14 rounded-full"
+              src="https://placehold.co/100x100/C7D2FE/4338CA?text=MD"
+              alt="Mr. David"
+            />
+            <h3 class="text-sm font-semibold text-gray-800 mt-2">Mr. David</h3>
+            <span class="text-xs text-gray-500">Teacher ID: TCH10023</span>
+          </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="py-4">
+            <li class="px-4">
+              <a
+                href="teacher_dashboard.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2.5a.5.5 0 01.5-.5h3a.5.5 0 01.5.5V17a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Dashboard</span>
+              </a>
+            </li>
+
+            <li class="px-4 mt-2">
+              <a
+                href="teacher_assignments.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm3 0a1 1 0 000 2h.01a1 1 0 100-2H13z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Assignments</span>
+              </a>
+            </li>
+
+            <li class="px-4 mt-2">
+              <a
+                href="teacher_exams.html"
+                class="flex items-center px-4 py-3 bg-primary text-white rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M12.5 3.25a.75.75 0 01.75.75v.5c0 .414.336.75.75.75h.5a.75.75 0 01.75.75v10a.75.75 0 01-.75.75H5.75a.75.75 0 01-.75-.75V5.75a.75.75 0 01.75-.75h.5a.75.75 0 01.75-.75v-.5a.75.75 0 01.75-.75h5zM3 5.75A2.25 2.25 0 015.25 3.5h.5a2.25 2.25 0 012.25-2.25h4a2.25 2.25 0 012.25 2.25h.5A2.25 2.25 0 0117 5.75v10A2.25 2.25 0 0114.75 18H5.25A2.25 2.25 0 013 15.75V5.75z"
+                    clip-rule="evenodd"
+                  />
+                  <path
+                    d="M7 8.25a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 017 8.25zM7 11.25a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 017 11.25zM7 14.25a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 017 14.25z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exams</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="teacher_resources.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3.49 2.22A2.25 2.25 0 001.25 4.5v11A2.25 2.25 0 003.5 17.75h13A2.25 2.25 0 0018.75 15.5v-11A2.25 2.25 0 0016.5 2.22H3.49zM2.75 4.5c0-.69.56-1.25 1.25-1.25h12c.69 0 1.25.56 1.25 1.25v11c0 .69-.56 1.25-1.25 1.25h-12c-.69 0-1.25-.56-1.25-1.25v-11z"
+                    clip-rule="evenodd"
+                  />
+                  <path
+                    d="M10 4.25a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5a.75.75 0 01.75-.75z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 8.854l-3.03 3.03a.75.75 0 001.06 1.06L10 10.97l2.97 2.97a.75.75 0 001.06-1.06L11.061 8.854 10 7.793l-1.061 1.06z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Resources</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="teacher_timetable.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Timetable</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <div
+        class="flex-1 flex flex-col overflow-hidden transition-all duration-300"
+        :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'"
+      >
+        <header
+          class="h-16 flex items-center justify-between bg-white border-b px-6"
+        >
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="text-gray-600 hover:text-gray-800"
+          >
+            <svg
+              class="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+          <div class="hidden md:flex items-center">
+            <svg
+              class="w-6 h-6 text-primary"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+              />
+              <path
+                d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+              />
+              <path
+                d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+              />
+            </svg>
+            <h2 class="ml-2 text-lg font-semibold text-gray-800">
+              Student Management System
+            </h2>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="relative" x-data="{ open: false }">
+              <button
+                @click="open = !open; profileOpen = false"
+                class="text-gray-600 hover:text-gray-800 relative"
+              >
+                <svg
+                  class="w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.017 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                  />
+                </svg>
+                <span
+                  class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"
+                ></span>
+              </button>
+            </div>
+            <div class="relative" x-data="{ open: false }">
+              <button
+                @click="open = !open; notificationOpen = false"
+                class="flex items-center space-x-2"
+              >
+                <span class="text-sm font-medium text-gray-800 hidden sm:block"
+                  >Mr. David</span
+                >
+                <svg
+                  class="w-4 h-4 text-gray-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+              <div
+                x-show="open"
+                @click.away="open = false"
+                x-cloak
+                x-transition
+                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl overflow-hidden z-10"
+              >
+                <a
+                  href="teacher_profile.html"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >My Profile</a
+                >
+                <a
+                  href="#logout"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >Logout</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main
+          class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 sm:p-6"
+          x-data="gradingExamPage()"
+          x-init="loadExamData()"
+        >
+          <div class="max-w-7xl mx-auto">
+            <div class="mb-5">
+              <a
+                href="teacher_exams.html"
+                class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-800 mb-2"
+              >
+                <svg
+                  class="w-5 h-5 mr-1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M12.79 5.23a.75.75 0 010 1.06L9.06 10l3.73 3.71a.75.75 0 11-1.06 1.06l-4.25-4.25a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Back to Exams
+              </a>
+              <div class="flex items-center gap-3">
+                <h1
+                  class="text-2xl font-semibold text-gray-900"
+                  x-text="exam.title"
+                ></h1>
+                <span
+                  x-show="isGradedView"
+                  class="text-sm font-medium px-3 py-0.5 rounded-full bg-blue-100 text-blue-800"
+                  x-cloak
+                  >View Only</span
+                >
+              </div>
+              <p
+                class="text-sm text-gray-600"
+                x-text="`${exam.class} • ${exam.date} at ${exam.time}`"
+              ></p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div class="bg-white p-5 rounded-lg shadow-sm">
+                <div class="text-sm font-medium text-gray-500 uppercase">
+                  Needs Grading
+                </div>
+                <div
+                  class="text-3xl font-semibold text-yellow-600"
+                  x-text="stats.needsGrading"
+                ></div>
+              </div>
+              <div class="bg-white p-5 rounded-lg shadow-sm">
+                <div class="text-sm font-medium text-gray-500 uppercase">
+                  Graded
+                </div>
+                <div
+                  class="text-3xl font-semibold text-green-600"
+                  x-text="stats.graded"
+                ></div>
+              </div>
+              <div class="bg-white p-5 rounded-lg shadow-sm">
+                <div class="text-sm font-medium text-gray-500 uppercase">
+                  Absent
+                </div>
+                <div
+                  class="text-3xl font-semibold text-gray-900"
+                  x-text="stats.absent"
+                ></div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm">
+              <div
+                class="sticky top-0 bg-white z-10 p-4 border-b border-gray-200"
+              >
+                <div
+                  class="flex flex-col sm:flex-row justify-between items-center gap-4"
+                >
+                  <h3
+                    class="text-lg font-medium text-gray-900"
+                    x-text="`Students: ${exam.class}`"
+                  ></h3>
+
+                  <div class="flex-shrink-0">
+                    <button
+                      x-show="!isGradedView"
+                      type="button"
+                      @click="saveGrades()"
+                      class="w-full sm:w-auto flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover"
+                      x-cloak
+                    >
+                      Save All Grades
+                    </button>
+                    <button
+                      x-show="isGradedView"
+                      type="button"
+                      class="w-full sm:w-auto flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white"
+                      disabled
+                      x-cloak
+                    >
+                      All Grades Saved
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Student Name
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Status
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Grade (out of 100)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <template x-for="student in students" :key="student.id">
+                      <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                              <img
+                                class="h-10 w-10 rounded-full"
+                                :src="student.avatar"
+                                alt=""
+                              />
+                            </div>
+                            <div class="ml-4">
+                              <div
+                                class="text-sm font-medium text-gray-900"
+                                x-text="student.name"
+                              ></div>
+                              <div
+                                class="text-sm text-gray-500"
+                                x-text="`ID: ${student.id}`"
+                              ></div>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <select
+                            class="status-select rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                            x-model="student.status"
+                            :disabled="isGradedView"
+                            @change="student.status === 'Absent' ? student.grade = null : ''"
+                          >
+                            <option>Attended</option>
+                            <option>Absent</option>
+                            <option
+                              x-show="student.status === 'Graded'"
+                              value="Graded"
+                            >
+                              Graded
+                            </option>
+                          </select>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div class="flex items-center space-x-2">
+                            <input
+                              type="number"
+                              class="grade-input rounded-md border-gray-300 shadow-sm sm:text-sm"
+                              :class="{ 'focus:border-primary focus:ring-primary': !isGradedView }"
+                              :disabled="isGradedView || student.status === 'Absent'"
+                              x-model="student.grade"
+                              placeholder="--"
+                            />
+                            <span class="text-sm text-gray-500">/ 100</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      function gradingExamPage() {
+        return {
+          isGradedView: false,
+          exam: {
+            id: null,
+            title: "Loading...",
+            class: "",
+            date: "",
+            time: "",
+            status: "",
+          },
+          students: [], // This will be populated
+
+          init() {
+            this.loadExamData();
+          },
+
+          loadExamData() {
+            // --- MOCK DATA ---
+            const urlParams = new URLSearchParams(window.location.search);
+            const examId = urlParams.get("id") || "3"; // Default to 'Pending' example
+
+            const allExams = {
+              3: {
+                id: 3,
+                title: "Optics Written Test",
+                class: "11A",
+                date: "Dec 05, 2023",
+                time: "01:00 PM",
+                status: "Pending Grades",
+              },
+              4: {
+                id: 4,
+                title: "Calculus Final",
+                class: "10A",
+                date: "Dec 01, 2023",
+                time: "09:00 AM",
+                status: "Completed",
+              },
+            };
+
+            const allStudents = {
+              "11A": [
+                // For Optics Test
+                {
+                  id: "STU2023127",
+                  name: "Sophia Miller",
+                  avatar: "https://placehold.co/100x100/FEE2E2/991B1B?text=SM",
+                  status: "Attended",
+                  grade: null,
+                },
+                {
+                  id: "STU2023128",
+                  name: "Daniel Garcia",
+                  avatar: "https://placehold.co/100x100/D1FAE5/065F46?text=DG",
+                  status: "Attended",
+                  grade: null,
+                },
+                {
+                  id: "STU2023129",
+                  name: "Olivia Martinez",
+                  avatar: "https://placehold.co/100x100/FEF3C7/9A3412?text=OM",
+                  status: "Absent",
+                  grade: null,
+                },
+              ],
+              "10A": [
+                // For Calculus Final
+                {
+                  id: "STU2023456",
+                  name: "Emily Johnson",
+                  avatar: "https://placehold.co/100x100/E2E8F0/4A5568?text=EJ",
+                  status: "Graded",
+                  grade: 95,
+                },
+                {
+                  id: "STU2023123",
+                  name: "Michael Brown",
+                  avatar: "https://placehold.co/100x100/C6F6D5/22543D?text=MB",
+                  status: "Graded",
+                  grade: 88,
+                },
+                {
+                  id: "STU2023125",
+                  name: "David Lee",
+                  avatar: "https://placehold.co/100x100/C4F1F9/0B697F?text=DL",
+                  status: "Graded",
+                  grade: 92,
+                },
+                {
+                  id: "STU2023126",
+                  name: "James Wilson",
+                  avatar: "https://placehold.co/100x100/E9D8FD/5A3E8A?text=JW",
+                  status: "Absent",
+                  grade: null,
+                },
+              ],
+            };
+            // --- END MOCK DATA ---
+
+            const currentExam = allExams[examId] || {
+              id: 0,
+              title: "Exam Not Found",
+              class: "N/A",
+              status: "Error",
+            };
+
+            this.exam = currentExam;
+            this.isGradedView = currentExam.status === "Completed";
+
+            // Load the students for that exam's class
+            this.students = allStudents[currentExam.class] || [];
+          },
+
+          // Recalculate stats when student data changes
+          get stats() {
+            return {
+              needsGrading: this.students.filter(
+                (s) =>
+                  s.status === "Attended" &&
+                  (s.grade === null || s.grade === "")
+              ).length,
+              graded: this.students.filter((s) => s.status === "Graded").length,
+              absent: this.students.filter((s) => s.status === "Absent").length,
+            };
+          },
+
+          saveGrades() {
+            // In a real app, this would send the `this.students` array to a server
+            console.log("Saving grades:", JSON.stringify(this.students));
+
+            // Update statuses locally
+            this.students.forEach((student) => {
+              if (
+                student.status === "Attended" &&
+                student.grade !== null &&
+                student.grade !== ""
+              ) {
+                student.status = "Graded";
+              }
+            });
+
+            alert("Grades saved successfully!");
+
+            // Go into "View Only" mode after saving
+            this.isGradedView = true;
+            this.exam.status = "Completed"; // Update local exam status
+          },
+        };
+      }
+
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("gradingExamPage", gradingExamPage);
+      });
+    </script>
+  </body>
+</html>
