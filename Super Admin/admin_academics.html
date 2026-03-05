@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Academic Structure - Super Admin</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                DEFAULT: "#4F46E5", // Indigo-600
+                hover: "#4338CA", // Indigo-700
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("academicsManagement", () => ({
+          activeTab: "classes",
+          isModalOpen: false,
+          classes: [
+            { id: 1, name: "Grade 10", sections: ["A", "B", "C"] },
+            { id: 2, name: "Grade 11", sections: ["A", "B"] },
+            { id: 3, name: "Grade 12", sections: ["A", "Science", "Commerce"] },
+            { id: 4, name: "Grade 9", sections: ["A", "B"] },
+          ],
+          subjects: [
+            { code: "MTH101", name: "Mathematics", type: "Core" },
+            { code: "SCI202", name: "Science", type: "Core" },
+            { code: "ENG303", name: "English Literature", type: "Elective" },
+            { code: "PHY404", name: "Physics", type: "Core" },
+          ],
+
+          getButtonText() {
+            if (this.activeTab === "classes") return "Add Class";
+            if (this.activeTab === "subjects") return "Add Subject";
+            if (this.activeTab === "allocations") return "Assign Teacher";
+            return "Add New";
+          },
+
+          openModal() {
+            this.isModalOpen = true;
+          },
+        }));
+      });
+    </script>
+
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <style>
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body class="font-sans bg-gray-50">
+    <div
+      x-data="{ sidebarOpen: window.innerWidth > 1024 }"
+      class="flex h-screen bg-gray-100"
+    >
+      <div
+        x-show="sidebarOpen"
+        @click="sidebarOpen = false"
+        class="fixed inset-0 bg-black/50 z-30 lg:hidden"
+        x-cloak
+      ></div>
+
+      <aside
+        class="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-white border-r transition-transform duration-300 transform"
+        :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+      >
+        <div class="h-24 flex items-center justify-center border-b">
+          <div class="flex flex-col items-center text-center p-4">
+            <div
+              class="h-12 w-12 rounded bg-primary flex items-center justify-center text-white font-bold text-xl shadow-sm"
+            >
+              A
+            </div>
+            <h3 class="text-sm font-semibold text-gray-800 mt-2">
+              Super Admin
+            </h3>
+            <span class="text-xs text-gray-500">System Owner</span>
+          </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="py-4">
+            <li class="px-4">
+              <a
+                href="admin_dashboard.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2.5a.5.5 0 01.5-.5h3a.5.5 0 01.5.5V17a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Dashboard</span>
+              </a>
+            </li>
+
+            <li
+              class="px-4 mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              Management
+            </li>
+
+            <li class="px-4 mt-2">
+              <a
+                href="admin_users.html"
+                class="flex items-center px-4 py-3 bg-primary text-white rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Users & Roles</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_academics.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.004-.002l.004-.002l.003-.001l.002-.001l.002-.001L10.394 3.2l.002.001l.002.001l.003.001l.004.002l.004.002a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+                  />
+                  <path
+                    d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+                  />
+                  <path
+                    d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Academics</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_exams.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exams & Grades</span>
+              </a>
+            </li>
+
+            <li
+              class="px-4 mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              System
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_announcements.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10 3.5A1.5 1.5 0 0111.5 5v1.615a.75.75 0 00.416.678l.49.245a1.5 1.5 0 01.894 1.368V10.5A1.5 1.5 0 0113 12h-1.5a.75.75 0 00-.75.75v1.315a1.5 1.5 0 01-1.5 1.435h-1.5A1.5 1.5 0 016 14.065V12.75A.75.75 0 005.25 12H3.75a1.5 1.5 0 01-1.5-1.5V9.406a1.5 1.5 0 01.894-1.368l.49-.245A.75.75 0 004 7.115V5A1.5 1.5 0 015.5 3.5h3A1.5 1.5 0 0110 3.5zM8.5 5V3.5h-3A.5.5 0 005 4v3.115a2.25 2.25 0 01-1.342 2.052l-.49.245A.5.5 0 003 9.806V10.5a.5.5 0 00.5.5H5a.75.75 0 01.75.75v1.315a.5.5 0 00.5.485h1.5a.5.5 0 00.5-.485V12.75A.75.75 0 019 12h1.5a.5.5 0 00.5-.5V9.806a.5.5 0 00-.158-.399l-.49-.245a2.25 2.25 0 01-1.342-2.052V5h-1.5z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Announcements</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_settings.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.835 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.835 2.942-.734 2.106-2.106a1.533 1.533 0 01-.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.835-1.372-.734-2.942-2.106-2.106A1.532 1.532 0 0111.49 3.17zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">System Config</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="border-t p-4">
+          <a
+            href="#logout"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+          >
+            <svg
+              class="w-5 h-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M3 4.25A2.25 2.25 0 015.25 2h5.5A2.25 2.25 0 0113 4.25v2a.75.75 0 01-1.5 0v-2a.75.75 0 00-.75-.75h-5.5a.75.75 0 00-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 00.75-.75v-2a.75.75 0 011.5 0v2A2.25 2.25 0 0110.75 18h-5.5A2.25 2.25 0 013 15.75V4.25z"
+                clip-rule="evenodd"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M19 10a.75.75 0 00-.75-.75H8.704l1.048-.943a.75.75 0 10-1.004-1.114l-2.5 2.25a.75.75 0 000 1.114l2.5 2.25a.75.75 0 101.004-1.114l-1.048-.943h9.546A.75.75 0 0019 10z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="ml-3 font-medium">Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <div
+        class="flex-1 flex flex-col overflow-hidden transition-all duration-300"
+        :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'"
+      >
+        <header
+          class="h-20 flex items-center justify-between bg-white border-b border-gray-200 px-6"
+        >
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="text-gray-600 hover:text-gray-800"
+          >
+            <svg
+              class="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+          <h2 class="text-xl font-semibold text-gray-800 hidden md:block">
+            Academic Structure
+          </h2>
+
+          <div class="flex items-center gap-3">
+            <div class="text-right hidden sm:block">
+              <div class="text-sm font-bold text-gray-800">Mr. Anderson</div>
+              <div
+                class="text-xs text-primary font-medium uppercase tracking-wider"
+              >
+                Super Admin
+              </div>
+            </div>
+            <div
+              class="h-10 w-10 rounded bg-slate-800 text-white flex items-center justify-center font-bold"
+            >
+              MA
+            </div>
+          </div>
+        </header>
+
+        <main
+          class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6"
+          x-data="academicsManagement()"
+        >
+          <div class="max-w-7xl mx-auto">
+            <div
+              class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4"
+            >
+              <div
+                class="bg-white p-1 rounded-lg shadow-sm border border-gray-200 inline-flex"
+              >
+                <button
+                  @click="activeTab = 'classes'"
+                  :class="activeTab === 'classes' ? 'bg-primary text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  Classes & Sections
+                </button>
+                <button
+                  @click="activeTab = 'subjects'"
+                  :class="activeTab === 'subjects' ? 'bg-primary text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  Subjects
+                </button>
+                <button
+                  @click="activeTab = 'allocations'"
+                  :class="activeTab === 'allocations' ? 'bg-primary text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  Allocations
+                </button>
+              </div>
+
+              <button
+                @click="openModal()"
+                class="flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+              >
+                <svg
+                  class="w-5 h-5 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"
+                  />
+                </svg>
+                <span x-text="getButtonText()"></span>
+              </button>
+            </div>
+
+            <div x-show="activeTab === 'classes'" x-cloak>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <template x-for="cls in classes" :key="cls.id">
+                  <div
+                    class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+                  >
+                    <div
+                      class="p-5 border-b border-gray-100 flex justify-between items-center"
+                    >
+                      <h3
+                        class="text-lg font-semibold text-gray-900"
+                        x-text="cls.name"
+                      ></h3>
+                      <div class="flex gap-2">
+                        <button class="text-gray-400 hover:text-primary">
+                          <svg
+                            class="w-4 h-4"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
+                            />
+                          </svg>
+                        </button>
+                        <button class="text-gray-400 hover:text-red-600">
+                          <svg
+                            class="w-4 h-4"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="p-5 bg-gray-50">
+                      <h4
+                        class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3"
+                      >
+                        Sections
+                      </h4>
+                      <div class="flex flex-wrap gap-2">
+                        <template
+                          x-for="section in cls.sections"
+                          :key="section"
+                        >
+                          <span
+                            class="px-3 py-1 bg-white border border-gray-200 rounded-full text-sm text-gray-700 font-medium shadow-sm"
+                            x-text="section"
+                          ></span>
+                        </template>
+                        <button
+                          class="px-3 py-1 border border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:text-primary hover:border-primary hover:bg-white transition-colors"
+                        >
+                          + Add
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <div x-show="activeTab === 'subjects'" x-cloak>
+              <div
+                class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+              >
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Subject Code
+                      </th>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Name
+                      </th>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Type
+                      </th>
+                      <th class="px-6 py-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                    <template x-for="sub in subjects" :key="sub.code">
+                      <tr>
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                          x-text="sub.code"
+                        ></td>
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+                          x-text="sub.name"
+                        ></td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <span
+                            class="px-2 text-xs font-semibold rounded-full"
+                            :class="sub.type === 'Core' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'"
+                            x-text="sub.type"
+                          ></span>
+                        </td>
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                        >
+                          <a href="#" class="text-primary hover:text-indigo-900"
+                            >Edit</a
+                          >
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div x-show="activeTab === 'allocations'" x-cloak>
+              <div
+                class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+              >
+                <div class="p-4 border-b border-gray-200 bg-gray-50 flex gap-4">
+                  <select class="rounded-md border-gray-300 text-sm">
+                    <option>Filter by Teacher</option>
+                  </select>
+                  <select class="rounded-md border-gray-300 text-sm">
+                    <option>Filter by Class</option>
+                  </select>
+                </div>
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Teacher
+                      </th>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Subject
+                      </th>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Assigned Class
+                      </th>
+                      <th class="px-6 py-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50">
+                      <td
+                        class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                      >
+                        Mr. David
+                      </td>
+                      <td
+                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+                      >
+                        Mathematics
+                      </td>
+                      <td
+                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+                      >
+                        <span class="bg-gray-100 px-2 py-1 rounded">10-A</span>
+                      </td>
+                      <td
+                        class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                      >
+                        <a href="#" class="text-red-600 hover:text-red-900"
+                          >Remove</a
+                        >
+                      </td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                      <td
+                        class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                      >
+                        Ms. Frizzle
+                      </td>
+                      <td
+                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+                      >
+                        Science
+                      </td>
+                      <td
+                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+                      >
+                        <span class="bg-gray-100 px-2 py-1 rounded">08-B</span>
+                      </td>
+                      <td
+                        class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                      >
+                        <a href="#" class="text-red-600 hover:text-red-900"
+                          >Remove</a
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div
+            x-show="isModalOpen"
+            class="fixed inset-0 z-50 overflow-y-auto"
+            aria-labelledby="modal-title"
+            role="dialog"
+            aria-modal="true"
+            x-cloak
+          >
+            <div
+              class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+            >
+              <div
+                class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                @click="isModalOpen = false"
+              ></div>
+              <div
+                class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+              >
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <h3
+                    class="text-lg leading-6 font-medium text-gray-900"
+                    id="modal-title"
+                  >
+                    <span x-text="getButtonText()"></span>
+                  </h3>
+                  <div class="mt-4">
+                    <div x-show="activeTab === 'classes'">
+                      <label class="block text-sm font-medium text-gray-700"
+                        >Class Name</label
+                      >
+                      <input
+                        type="text"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                        placeholder="e.g. Grade 11"
+                      />
+                    </div>
+                    <div x-show="activeTab === 'subjects'">
+                      <label class="block text-sm font-medium text-gray-700"
+                        >Subject Name</label
+                      >
+                      <input
+                        type="text"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                        placeholder="e.g. Chemistry"
+                      />
+                    </div>
+                    <div x-show="activeTab === 'allocations'">
+                      <p class="text-sm text-gray-500">
+                        Assign a teacher to a class.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
+                >
+                  <button
+                    @click="isModalOpen = false"
+                    type="button"
+                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-indigo-700 sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Save
+                  </button>
+                  <button
+                    @click="isModalOpen = false"
+                    type="button"
+                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

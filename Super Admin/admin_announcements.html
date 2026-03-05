@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Announcements - Super Admin</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                DEFAULT: "#4F46E5", // Indigo-600
+                hover: "#4338CA", // Indigo-700
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("announcementsManagement", () => ({
+          filterType: "all",
+          search: "",
+          isModalOpen: false,
+          posts: [
+            {
+              id: 1,
+              title: "School Closed for Winter Break",
+              content: "The school will remain closed from Dec 20 to Jan 5.",
+              audience: "All Users",
+              priority: "Urgent",
+              date: "Dec 18, 2023",
+              status: "Active",
+            },
+            {
+              id: 2,
+              title: "Parent-Teacher Meeting",
+              content: "Scheduled for next Friday. Please book slots.",
+              audience: "Parents Only",
+              priority: "Event",
+              date: "Dec 10, 2023",
+              status: "Active",
+            },
+            {
+              id: 3,
+              title: "Grade 10 Field Trip",
+              content: "Permission slips due by Monday.",
+              audience: "Class 10 (All Sections)",
+              priority: "Normal",
+              date: "Dec 05, 2023",
+              status: "Active",
+            },
+            {
+              id: 4,
+              title: "New Grading Policy",
+              content: "Teachers, please review the updated grading rubric.",
+              audience: "Teachers Only",
+              priority: "Normal",
+              date: "Nov 28, 2023",
+              status: "Draft",
+            },
+          ],
+
+          get filteredPosts() {
+            return this.posts.filter((post) => {
+              const matchesType =
+                this.filterType === "all" ||
+                (this.filterType === "School News" &&
+                  post.audience === "All Users") ||
+                post.priority === this.filterType;
+              return matchesType;
+            });
+          },
+
+          openModal() {
+            this.isModalOpen = true;
+          },
+        }));
+      });
+    </script>
+
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <style>
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body class="font-sans bg-gray-50">
+    <div
+      x-data="{ sidebarOpen: window.innerWidth > 1024 }"
+      class="flex h-screen bg-gray-100"
+    >
+      <div
+        x-show="sidebarOpen"
+        @click="sidebarOpen = false"
+        class="fixed inset-0 bg-black/50 z-30 lg:hidden"
+        x-cloak
+      ></div>
+
+      <aside
+        class="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-white border-r transition-transform duration-300 transform"
+        :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+      >
+        <div class="h-24 flex items-center justify-center border-b">
+          <div class="flex flex-col items-center text-center p-4">
+            <div
+              class="h-12 w-12 rounded bg-primary flex items-center justify-center text-white font-bold text-xl shadow-sm"
+            >
+              A
+            </div>
+            <h3 class="text-sm font-semibold text-gray-800 mt-2">
+              Super Admin
+            </h3>
+            <span class="text-xs text-gray-500">System Owner</span>
+          </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="py-4">
+            <li class="px-4">
+              <a
+                href="admin_dashboard.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2.5a.5.5 0 01.5-.5h3a.5.5 0 01.5.5V17a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Dashboard</span>
+              </a>
+            </li>
+
+            <li
+              class="px-4 mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              Management
+            </li>
+
+            <li class="px-4 mt-2">
+              <a
+                href="admin_users.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Users & Roles</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_academics.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.004-.002l.004-.002l.003-.001l.002-.001l.002-.001L10.394 3.2l.002.001l.002.001l.003.001l.004.002l.004.002a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+                  />
+                  <path
+                    d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+                  />
+                  <path
+                    d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Academics</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_exams.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exams & Grades</span>
+              </a>
+            </li>
+
+            <li
+              class="px-4 mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              System
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_announcements.html"
+                class="flex items-center px-4 py-3 bg-primary text-white rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10 3.5A1.5 1.5 0 0111.5 5v1.615a.75.75 0 00.416.678l.49.245a1.5 1.5 0 01.894 1.368V10.5A1.5 1.5 0 0113 12h-1.5a.75.75 0 00-.75.75v1.315a1.5 1.5 0 01-1.5 1.435h-1.5A1.5 1.5 0 016 14.065V12.75A.75.75 0 005.25 12H3.75a1.5 1.5 0 01-1.5-1.5V9.406a1.5 1.5 0 01.894-1.368l.49-.245A.75.75 0 004 7.115V5A1.5 1.5 0 015.5 3.5h3A1.5 1.5 0 0110 3.5zM8.5 5V3.5h-3A.5.5 0 005 4v3.115a2.25 2.25 0 01-1.342 2.052l-.49.245A.5.5 0 003 9.806V10.5a.5.5 0 00.5.5H5a.75.75 0 01.75.75v1.315a.5.5 0 00.5.485h1.5a.5.5 0 00.5-.485V12.75A.75.75 0 019 12h1.5a.5.5 0 00.5-.5V9.806a.5.5 0 00-.158-.399l-.49-.245a2.25 2.25 0 01-1.342-2.052V5h-1.5z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Announcements</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_settings.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.835 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.835 2.942-.734 2.106-2.106a1.533 1.533 0 01-.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.835-1.372-.734-2.942-2.106-2.106A1.532 1.532 0 0111.49 3.17zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">System Config</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="border-t p-4">
+          <a
+            href="#logout"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+          >
+            <svg
+              class="w-5 h-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M3 4.25A2.25 2.25 0 015.25 2h5.5A2.25 2.25 0 0113 4.25v2a.75.75 0 01-1.5 0v-2a.75.75 0 00-.75-.75h-5.5a.75.75 0 00-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 00.75-.75v-2a.75.75 0 011.5 0v2A2.25 2.25 0 0110.75 18h-5.5A2.25 2.25 0 013 15.75V4.25z"
+                clip-rule="evenodd"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M19 10a.75.75 0 00-.75-.75H8.704l1.048-.943a.75.75 0 10-1.004-1.114l-2.5 2.25a.75.75 0 000 1.114l2.5 2.25a.75.75 0 101.004-1.114l-1.048-.943h9.546A.75.75 0 0019 10z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="ml-3 font-medium">Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <div
+        class="flex-1 flex flex-col overflow-hidden transition-all duration-300"
+        :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'"
+      >
+        <header
+          class="h-20 flex items-center justify-between bg-white border-b border-gray-200 px-6"
+        >
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="text-gray-600 hover:text-gray-800"
+          >
+            <svg
+              class="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+          <h2 class="text-xl font-semibold text-gray-800 hidden md:block">
+            Announcements
+          </h2>
+
+          <div class="flex items-center gap-3">
+            <div class="text-right hidden sm:block">
+              <div class="text-sm font-bold text-gray-800">Mr. Anderson</div>
+              <div
+                class="text-xs text-primary font-medium uppercase tracking-wider"
+              >
+                Super Admin
+              </div>
+            </div>
+            <div
+              class="h-10 w-10 rounded bg-slate-800 text-white flex items-center justify-center font-bold"
+            >
+              MA
+            </div>
+          </div>
+        </header>
+
+        <main
+          class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6"
+          x-data="announcementsManagement()"
+        >
+          <div class="max-w-7xl mx-auto">
+            <div
+              class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4"
+            >
+              <div
+                class="bg-white p-1 rounded-lg shadow-sm border border-gray-200 inline-flex"
+              >
+                <button
+                  @click="filterType = 'all'"
+                  :class="filterType === 'all' ? 'bg-gray-100 text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  All Posts
+                </button>
+                <button
+                  @click="filterType = 'School News'"
+                  :class="filterType === 'School News' ? 'bg-indigo-50 text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  School News
+                </button>
+                <button
+                  @click="filterType = 'Urgent'"
+                  :class="filterType === 'Urgent' ? 'bg-red-50 text-red-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  Urgent
+                </button>
+              </div>
+
+              <button
+                @click="openModal()"
+                class="flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+              >
+                <svg
+                  class="w-5 h-5 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                  />
+                </svg>
+                Post Announcement
+              </button>
+            </div>
+
+            <div
+              class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+            >
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Title
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Target Audience
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Priority
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Date Posted
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Status
+                    </th>
+                    <th class="px-6 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                  <template x-for="post in filteredPosts" :key="post.id">
+                    <tr class="hover:bg-gray-50">
+                      <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                        <div x-text="post.title"></div>
+                        <div
+                          class="text-xs text-gray-500 mt-1 truncate w-64"
+                          x-text="post.content"
+                        ></div>
+                      </td>
+                      <td
+                        class="px-6 py-4 text-sm text-gray-700"
+                        x-text="post.audience"
+                      ></td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span
+                          class="px-2 text-xs font-semibold rounded-full"
+                          :class="{
+                                            'bg-red-100 text-red-800': post.priority === 'Urgent',
+                                            'bg-blue-100 text-blue-800': post.priority === 'Normal',
+                                            'bg-yellow-100 text-yellow-800': post.priority === 'Event'
+                                        }"
+                          x-text="post.priority"
+                        >
+                        </span>
+                      </td>
+                      <td
+                        class="px-6 py-4 text-sm text-gray-700"
+                        x-text="post.date"
+                      ></td>
+                      <td class="px-6 py-4 text-sm text-gray-700">
+                        <span class="flex items-center gap-1">
+                          <span
+                            class="h-2 w-2 rounded-full"
+                            :class="post.status === 'Active' ? 'bg-green-500' : 'bg-gray-400'"
+                          ></span>
+                          <span x-text="post.status"></span>
+                        </span>
+                      </td>
+                      <td
+                        class="px-6 py-4 text-right text-sm font-medium space-x-2"
+                      >
+                        <button class="text-primary hover:text-indigo-900">
+                          Edit
+                        </button>
+                        <button class="text-red-600 hover:text-red-900">
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div
+            x-show="isModalOpen"
+            class="fixed inset-0 z-50 overflow-y-auto"
+            aria-labelledby="modal-title"
+            role="dialog"
+            aria-modal="true"
+            x-cloak
+          >
+            <div
+              class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+            >
+              <div
+                class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                @click="isModalOpen = false"
+              ></div>
+              <div
+                class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+              >
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <h3
+                    class="text-lg leading-6 font-medium text-gray-900"
+                    id="modal-title"
+                  >
+                    Post Announcement
+                  </h3>
+                  <div class="mt-4 space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700"
+                        >Title</label
+                      >
+                      <input
+                        type="text"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700"
+                        >Target Audience</label
+                      >
+                      <select
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                      >
+                        <option>All Users</option>
+                        <option>Teachers Only</option>
+                        <option>Parents Only</option>
+                        <option>Students Only</option>
+                        <option>Class 10 (All Sections)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700"
+                        >Priority</label
+                      >
+                      <select
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                      >
+                        <option>Normal</option>
+                        <option>Urgent</option>
+                        <option>Event</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700"
+                        >Content</label
+                      >
+                      <textarea
+                        rows="4"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
+                >
+                  <button
+                    @click="isModalOpen = false"
+                    type="button"
+                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-indigo-700 sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Post
+                  </button>
+                  <button
+                    @click="isModalOpen = false"
+                    type="button"
+                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

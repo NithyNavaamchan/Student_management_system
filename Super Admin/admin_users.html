@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Management - Super Admin</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                DEFAULT: "#4F46E5", // Indigo-600
+                hover: "#4338CA", // Indigo-700
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body class="font-sans bg-gray-50">
+    <div
+      x-data="{ sidebarOpen: window.innerWidth > 1024 }"
+      class="flex h-screen bg-gray-100"
+    >
+      <div
+        x-show="sidebarOpen"
+        @click="sidebarOpen = false"
+        class="fixed inset-0 bg-black/50 z-30 lg:hidden"
+        x-cloak
+      ></div>
+
+      <aside
+        class="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-white border-r transition-transform duration-300 transform"
+        :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+      >
+        <div class="h-24 flex items-center justify-center border-b">
+          <div class="flex flex-col items-center text-center p-4">
+            <div
+              class="h-12 w-12 rounded bg-primary flex items-center justify-center text-white font-bold text-xl shadow-sm"
+            >
+              A
+            </div>
+            <h3 class="text-sm font-semibold text-gray-800 mt-2">
+              Super Admin
+            </h3>
+            <span class="text-xs text-gray-500">System Owner</span>
+          </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="py-4">
+            <li class="px-4">
+              <a
+                href="admin_dashboard.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2.5a.5.5 0 01.5-.5h3a.5.5 0 01.5.5V17a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Dashboard</span>
+              </a>
+            </li>
+
+            <li
+              class="px-4 mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              Management
+            </li>
+
+            <li class="px-4 mt-2">
+              <a
+                href="admin_users.html"
+                class="flex items-center px-4 py-3 bg-primary text-white rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Users & Roles</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_academics.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.004-.002l.004-.002l.003-.001l.002-.001l.002-.001L10.394 3.2l.002.001l.002.001l.003.001l.004.002l.004.002a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+                  />
+                  <path
+                    d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+                  />
+                  <path
+                    d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Academics</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_exams.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exams & Grades</span>
+              </a>
+            </li>
+
+            <li
+              class="px-4 mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              System
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_announcements.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10 3.5A1.5 1.5 0 0111.5 5v1.615a.75.75 0 00.416.678l.49.245a1.5 1.5 0 01.894 1.368V10.5A1.5 1.5 0 0113 12h-1.5a.75.75 0 00-.75.75v1.315a1.5 1.5 0 01-1.5 1.435h-1.5A1.5 1.5 0 016 14.065V12.75A.75.75 0 005.25 12H3.75a1.5 1.5 0 01-1.5-1.5V9.406a1.5 1.5 0 01.894-1.368l.49-.245A.75.75 0 004 7.115V5A1.5 1.5 0 015.5 3.5h3A1.5 1.5 0 0110 3.5zM8.5 5V3.5h-3A.5.5 0 005 4v3.115a2.25 2.25 0 01-1.342 2.052l-.49.245A.5.5 0 003 9.806V10.5a.5.5 0 00.5.5H5a.75.75 0 01.75.75v1.315a.5.5 0 00.5.485h1.5a.5.5 0 00.5-.485V12.75A.75.75 0 019 12h1.5a.5.5 0 00.5-.5V9.806a.5.5 0 00-.158-.399l-.49-.245a2.25 2.25 0 01-1.342-2.052V5h-1.5z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Announcements</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_settings.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.835 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.835 2.942-.734 2.106-2.106a1.533 1.533 0 01-.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.835-1.372-.734-2.942-2.106-2.106A1.532 1.532 0 0111.49 3.17zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">System Config</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="border-t p-4">
+          <a
+            href="#logout"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+          >
+            <svg
+              class="w-5 h-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M3 4.25A2.25 2.25 0 015.25 2h5.5A2.25 2.25 0 0113 4.25v2a.75.75 0 01-1.5 0v-2a.75.75 0 00-.75-.75h-5.5a.75.75 0 00-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 00.75-.75v-2a.75.75 0 011.5 0v2A2.25 2.25 0 0110.75 18h-5.5A2.25 2.25 0 013 15.75V4.25z"
+                clip-rule="evenodd"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M19 10a.75.75 0 00-.75-.75H8.704l1.048-.943a.75.75 0 10-1.004-1.114l-2.5 2.25a.75.75 0 000 1.114l2.5 2.25a.75.75 0 101.004-1.114l-1.048-.943h9.546A.75.75 0 0019 10z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="ml-3 font-medium">Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <div
+        class="flex-1 flex flex-col overflow-hidden transition-all duration-300"
+        :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'"
+      >
+        <header
+          class="h-20 flex items-center justify-between bg-white border-b border-gray-200 px-6"
+        >
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="text-gray-600 hover:text-gray-800"
+          >
+            <svg
+              class="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+          <h2 class="text-xl font-semibold text-gray-800 hidden md:block">
+            User Management
+          </h2>
+
+          <div class="flex items-center gap-3">
+            <div class="text-right hidden sm:block">
+              <div class="text-sm font-bold text-gray-800">Mr. Anderson</div>
+              <div
+                class="text-xs text-primary font-medium uppercase tracking-wider"
+              >
+                Super Admin
+              </div>
+            </div>
+            <div
+              class="h-10 w-10 rounded bg-slate-800 text-white flex items-center justify-center font-bold"
+            >
+              MA
+            </div>
+          </div>
+        </header>
+
+        <main
+          class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6"
+          x-data="userManagement"
+        >
+          <div class="max-w-7xl mx-auto">
+            <div
+              class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4"
+            >
+              <div
+                class="bg-white p-1 rounded-lg shadow-sm border border-gray-200 inline-flex"
+              >
+                <button
+                  @click="filterRole = 'all'"
+                  :class="filterRole === 'all' ? 'bg-gray-100 text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  All Users
+                </button>
+                <button
+                  @click="filterRole = 'Admin'"
+                  :class="filterRole === 'Admin' ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  Admins
+                </button>
+                <button
+                  @click="filterRole = 'Teacher'"
+                  :class="filterRole === 'Teacher' ? 'bg-green-50 text-green-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  Teachers
+                </button>
+                <button
+                  @click="filterRole = 'Student'"
+                  :class="filterRole === 'Student' ? 'bg-indigo-50 text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  Students
+                </button>
+                <button
+                  @click="filterRole = 'Parent'"
+                  :class="filterRole === 'Parent' ? 'bg-orange-50 text-orange-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  Parents
+                </button>
+              </div>
+
+              <button
+                @click="openAddModal()"
+                class="flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+              >
+                <svg
+                  class="w-5 h-5 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"
+                  />
+                </svg>
+                Add New User
+              </button>
+            </div>
+
+            <div
+              class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6 flex flex-col sm:flex-row gap-4"
+            >
+              <div class="relative flex-1">
+                <div
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                >
+                  <svg
+                    class="w-5 h-5 text-gray-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  x-model="search"
+                  placeholder="Search by name, email, or ID..."
+                  class="block w-full pl-10 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                />
+              </div>
+              <select
+                class="rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+              >
+                <option>Status: All</option>
+                <option>Active</option>
+                <option>Suspended</option>
+              </select>
+            </div>
+
+            <div
+              class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+            >
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        User Details
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Role
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Status
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Specifics
+                      </th>
+                      <th scope="col" class="relative px-6 py-3">
+                        <span class="sr-only">Actions</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <template x-for="user in filteredUsers" :key="user.id">
+                      <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                              <div
+                                class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold"
+                                x-text="user.name.charAt(0)"
+                              ></div>
+                            </div>
+                            <div class="ml-4">
+                              <div
+                                class="text-sm font-medium text-gray-900"
+                                x-text="user.name"
+                              ></div>
+                              <div
+                                class="text-sm text-gray-500"
+                                x-text="user.email"
+                              ></div>
+                              <div
+                                class="text-xs text-gray-400"
+                                x-text="'ID: ' + user.id"
+                              ></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                            :class="{
+                                                'bg-purple-100 text-purple-800': user.role === 'Super Admin',
+                                                'bg-blue-100 text-blue-800': user.role === 'Admin',
+                                                'bg-green-100 text-green-800': user.role === 'Teacher',
+                                                'bg-indigo-100 text-indigo-800': user.role === 'Student',
+                                                'bg-orange-100 text-orange-800': user.role === 'Parent'
+                                            }"
+                            x-text="user.role"
+                          >
+                          </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <span
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
+                            >Active</span
+                          >
+                        </td>
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
+                          <template x-if="user.role === 'Student'">
+                            <span x-text="'Class: ' + user.class"></span>
+                          </template>
+                          <template x-if="user.role === 'Teacher'">
+                            <span x-text="'Dept: ' + user.department"></span>
+                          </template>
+                          <template
+                            x-if="['Admin', 'Super Admin', 'Parent'].includes(user.role)"
+                          >
+                            <span>-</span>
+                          </template>
+                        </td>
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                        >
+                          <a
+                            href="#"
+                            class="text-primary hover:text-indigo-900 mr-3"
+                            >Edit</a
+                          >
+                          <a href="#" class="text-red-600 hover:text-red-900"
+                            >Delete</a
+                          >
+                        </td>
+                      </tr>
+                    </template>
+                    <tr x-show="filteredUsers.length === 0">
+                      <td
+                        colspan="5"
+                        class="px-6 py-10 text-center text-sm text-gray-500"
+                      >
+                        No users found matching your criteria.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div
+                class="bg-gray-50 px-4 py-3 border-t border-gray-200 flex items-center justify-between sm:px-6"
+              >
+                <div
+                  class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <p class="text-sm text-gray-700">
+                      Showing <span class="font-medium">1</span> to
+                      <span class="font-medium">10</span> of
+                      <span class="font-medium" x-text="users.length"></span>
+                      results
+                    </p>
+                  </div>
+                  <div>
+                    <nav
+                      class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                      aria-label="Pagination"
+                    >
+                      <a
+                        href="#"
+                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                        >Previous</a
+                      >
+                      <a
+                        href="#"
+                        class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                        >Next</a
+                      >
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            x-show="isModalOpen"
+            class="fixed inset-0 z-50 overflow-y-auto"
+            aria-labelledby="modal-title"
+            role="dialog"
+            aria-modal="true"
+            x-cloak
+          >
+            <div
+              class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+            >
+              <div
+                x-show="isModalOpen"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                aria-hidden="true"
+              ></div>
+              <span
+                class="hidden sm:inline-block sm:align-middle sm:h-screen"
+                aria-hidden="true"
+                >&#8203;</span
+              >
+              <div
+                x-show="isModalOpen"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+              >
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <div class="sm:flex sm:items-start">
+                    <div
+                      class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full"
+                    >
+                      <h3
+                        class="text-lg leading-6 font-medium text-gray-900"
+                        id="modal-title"
+                      >
+                        Add New User
+                      </h3>
+                      <div class="mt-4 space-y-4">
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700"
+                            >Role</label
+                          >
+                          <select
+                            x-model="newUser.role"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                          >
+                            <option value="Student">Student</option>
+                            <option value="Teacher">Teacher</option>
+                            <option value="Parent">Parent</option>
+                            <option value="Admin">Admin</option>
+                          </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                          <div>
+                            <label
+                              class="block text-sm font-medium text-gray-700"
+                              >First Name</label
+                            >
+                            <input
+                              type="text"
+                              x-model="newUser.firstName"
+                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label
+                              class="block text-sm font-medium text-gray-700"
+                              >Last Name</label
+                            >
+                            <input
+                              type="text"
+                              x-model="newUser.lastName"
+                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700"
+                            >Email</label
+                          >
+                          <input
+                            type="email"
+                            x-model="newUser.email"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                          />
+                        </div>
+                        <div x-show="newUser.role === 'Student'">
+                          <label class="block text-sm font-medium text-gray-700"
+                            >Class / Section</label
+                          >
+                          <input
+                            type="text"
+                            placeholder="e.g. 10-A"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                          />
+                        </div>
+                        <div x-show="newUser.role === 'Teacher'">
+                          <label class="block text-sm font-medium text-gray-700"
+                            >Department / Subject</label
+                          >
+                          <input
+                            type="text"
+                            placeholder="e.g. Mathematics"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
+                >
+                  <button
+                    @click="addUser()"
+                    type="button"
+                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Create User
+                  </button>
+                  <button
+                    @click="isModalOpen = false"
+                    type="button"
+                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      function userManagement() {
+        return {
+          filterRole: "all",
+          search: "",
+          isModalOpen: false,
+          newUser: { role: "Student", firstName: "", lastName: "", email: "" },
+          users: [
+            {
+              id: "ADM001",
+              name: "Mr. Anderson",
+              email: "admin@school.edu",
+              role: "Super Admin",
+              class: "",
+              department: "",
+            },
+            {
+              id: "ADM002",
+              name: "Sarah Connor",
+              email: "s.connor@school.edu",
+              role: "Admin",
+              class: "",
+              department: "",
+            },
+            {
+              id: "TCH023",
+              name: "Mr. David",
+              email: "david@school.edu",
+              role: "Teacher",
+              class: "",
+              department: "Mathematics",
+            },
+            {
+              id: "TCH045",
+              name: "Ms. Frizzle",
+              email: "frizzle@school.edu",
+              role: "Teacher",
+              class: "",
+              department: "Science",
+            },
+            {
+              id: "STU101",
+              name: "Emily Johnson",
+              email: "emily.j@student.school.edu",
+              role: "Student",
+              class: "10-A",
+              department: "",
+            },
+            {
+              id: "STU102",
+              name: "Michael Brown",
+              email: "mike.b@student.school.edu",
+              role: "Student",
+              class: "10-B",
+              department: "",
+            },
+            {
+              id: "PAR001",
+              name: "Sarah Johnson",
+              email: "sarah.j@parent.com",
+              role: "Parent",
+              class: "",
+              department: "",
+            },
+          ],
+
+          get filteredUsers() {
+            return this.users.filter((user) => {
+              const matchesRole =
+                this.filterRole === "all" || user.role === this.filterRole;
+              const matchesSearch =
+                user.name.toLowerCase().includes(this.search.toLowerCase()) ||
+                user.email.toLowerCase().includes(this.search.toLowerCase()) ||
+                user.id.toLowerCase().includes(this.search.toLowerCase());
+              return matchesRole && matchesSearch;
+            });
+          },
+
+          openAddModal() {
+            this.newUser = {
+              role: "Student",
+              firstName: "",
+              lastName: "",
+              email: "",
+            };
+            this.isModalOpen = true;
+          },
+
+          addUser() {
+            // Simulation: Add to local array
+            const idPrefix = this.newUser.role.substring(0, 3).toUpperCase();
+            const newId = idPrefix + Math.floor(Math.random() * 1000);
+
+            this.users.unshift({
+              id: newId,
+              name: `${this.newUser.firstName} ${this.newUser.lastName}`,
+              email: this.newUser.email,
+              role: this.newUser.role,
+              class: this.newUser.role === "Student" ? "N/A" : "",
+              department: this.newUser.role === "Teacher" ? "N/A" : "",
+            });
+
+            this.isModalOpen = false;
+            alert("User created successfully!");
+          },
+        };
+      }
+
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("userManagement", userManagement);
+      });
+    </script>
+  </body>
+</html>

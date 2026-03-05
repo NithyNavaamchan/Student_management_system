@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>System Settings - Super Admin</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                DEFAULT: "#4F46E5", // Indigo-600
+                hover: "#4338CA", // Indigo-700
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("systemSettings", () => ({
+          activeTab: "general",
+          auditLogs: [
+            {
+              id: 1,
+              action: "System Backup Created",
+              user: "Mr. Anderson",
+              role: "Super Admin",
+              date: "Oct 26, 2023 10:00 PM",
+              ip: "192.168.1.1",
+            },
+            {
+              id: 2,
+              action: "Added New Teacher",
+              user: "Sarah Connor",
+              role: "Admin",
+              date: "Oct 26, 2023 02:15 PM",
+              ip: "192.168.1.45",
+            },
+            {
+              id: 3,
+              action: "Published Exam Results",
+              user: "Mr. Anderson",
+              role: "Super Admin",
+              date: "Oct 25, 2023 11:30 AM",
+              ip: "192.168.1.1",
+            },
+            {
+              id: 4,
+              action: "Login Failed (3 attempts)",
+              user: "Unknown",
+              role: "-",
+              date: "Oct 24, 2023 04:00 AM",
+              ip: "203.0.113.5",
+            },
+            {
+              id: 5,
+              action: "Updated Fee Structure",
+              user: "Mr. Anderson",
+              role: "Super Admin",
+              date: "Oct 20, 2023 09:00 AM",
+              ip: "192.168.1.1",
+            },
+          ],
+        }));
+      });
+    </script>
+
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <style>
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body class="font-sans bg-gray-50">
+    <div
+      x-data="{ sidebarOpen: window.innerWidth > 1024 }"
+      class="flex h-screen bg-gray-100"
+    >
+      <div
+        x-show="sidebarOpen"
+        @click="sidebarOpen = false"
+        class="fixed inset-0 bg-black/50 z-30 lg:hidden"
+        x-cloak
+      ></div>
+
+      <aside
+        class="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-white border-r transition-transform duration-300 transform"
+        :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+      >
+        <div class="h-24 flex items-center justify-center border-b">
+          <div class="flex flex-col items-center text-center p-4">
+            <div
+              class="h-12 w-12 rounded bg-primary flex items-center justify-center text-white font-bold text-xl shadow-sm"
+            >
+              A
+            </div>
+            <h3 class="text-sm font-semibold text-gray-800 mt-2">
+              Super Admin
+            </h3>
+            <span class="text-xs text-gray-500">System Owner</span>
+          </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="flex-1 overflow-y-auto">
+          <ul class="py-4">
+            <li class="px-4">
+              <a
+                href="admin_dashboard.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2.5a.5.5 0 01.5-.5h3a.5.5 0 01.5.5V17a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Dashboard</span>
+              </a>
+            </li>
+
+            <li
+              class="px-4 mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              Management
+            </li>
+
+            <li class="px-4 mt-2">
+              <a
+                href="admin_users.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Users & Roles</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_academics.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.394 2.08a1 1 0 00-1.79 0l-1.006.365a1 1 0 00-.5.867l.21 1.162a1 1 0 01-.44 1.06l-.75.603a1 1 0 00.11 1.74l1.07.19a1 1 0 01.82.78l.36 1.005a1 1 0 001.79 0l.36-1.005a1 1 0 01.82-.78l1.07-.19a1 1 0 00.11-1.74l-.75-.603a1 1 0 01-.44-1.06l.21-1.162a1 1 0 00-.5-.867l-1.006-.365zM9.61 3.23a1 1 0 00.78 0l.004-.002l.004-.002l.003-.001l.002-.001l.002-.001L10.394 3.2l.002.001l.002.001l.003.001l.004.002l.004.002a1 1 0 00.78 0l.995.362a.01.01 0 01.005.008l-.209 1.157a.01.01 0 01-.004.01l.749.602a.01.01 0 01-.001.017l-1.07.19a.01.01 0 01-.008.008l-.36 1.004a.01.01 0 01-.018 0l-.36-1.004a.01.01 0 01-.008-.008l-1.07-.19a.01.01 0 01-.001-.017l.749-.602a.01.01 0 01-.004-.01l-.209-1.157a.01.01 0 01.005-.008l.995-.362z"
+                  />
+                  <path
+                    d="M11 6a1 1 0 10-2 0v3.013a1 1 0 00.5 1.789l.863.492a1 1 0 101-1.732L11 9.382V6z"
+                  />
+                  <path
+                    d="M4.17 10.342a7.5 7.5 0 1111.66 0 1 1 0 00.323 1.385l.007.005a1 1 0 001.385-.323A9.5 9.5 0 102.78 11.722a1 1 0 001.385.323l.007-.005a1 1 0 00.323-1.385z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Academics</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_exams.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Exams & Grades</span>
+              </a>
+            </li>
+
+            <li
+              class="px-4 mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            >
+              System
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_announcements.html"
+                class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10 3.5A1.5 1.5 0 0111.5 5v1.615a.75.75 0 00.416.678l.49.245a1.5 1.5 0 01.894 1.368V10.5A1.5 1.5 0 0113 12h-1.5a.75.75 0 00-.75.75v1.315a1.5 1.5 0 01-1.5 1.435h-1.5A1.5 1.5 0 016 14.065V12.75A.75.75 0 005.25 12H3.75a1.5 1.5 0 01-1.5-1.5V9.406a1.5 1.5 0 01.894-1.368l.49-.245A.75.75 0 004 7.115V5A1.5 1.5 0 015.5 3.5h3A1.5 1.5 0 0110 3.5zM8.5 5V3.5h-3A.5.5 0 005 4v3.115a2.25 2.25 0 01-1.342 2.052l-.49.245A.5.5 0 003 9.806V10.5a.5.5 0 00.5.5H5a.75.75 0 01.75.75v1.315a.5.5 0 00.5.485h1.5a.5.5 0 00.5-.485V12.75A.75.75 0 019 12h1.5a.5.5 0 00.5-.5V9.806a.5.5 0 00-.158-.399l-.49-.245a2.25 2.25 0 01-1.342-2.052V5h-1.5z"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">Announcements</span>
+              </a>
+            </li>
+            <li class="px-4 mt-2">
+              <a
+                href="admin_settings.html"
+                class="flex items-center px-4 py-3 bg-primary text-white rounded-lg"
+              >
+                <svg
+                  class="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.835 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.835 2.942-.734 2.106-2.106a1.533 1.533 0 01-.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.835-1.372-.734-2.942-2.106-2.106A1.532 1.532 0 0111.49 3.17zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="ml-3 font-medium">System Config</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="border-t p-4">
+          <a
+            href="#logout"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
+          >
+            <svg
+              class="w-5 h-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M3 4.25A2.25 2.25 0 015.25 2h5.5A2.25 2.25 0 0113 4.25v2a.75.75 0 01-1.5 0v-2a.75.75 0 00-.75-.75h-5.5a.75.75 0 00-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 00.75-.75v-2a.75.75 0 011.5 0v2A2.25 2.25 0 0110.75 18h-5.5A2.25 2.25 0 013 15.75V4.25z"
+                clip-rule="evenodd"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M19 10a.75.75 0 00-.75-.75H8.704l1.048-.943a.75.75 0 10-1.004-1.114l-2.5 2.25a.75.75 0 000 1.114l2.5 2.25a.75.75 0 101.004-1.114l-1.048-.943h9.546A.75.75 0 0019 10z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="ml-3 font-medium">Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <div
+        class="flex-1 flex flex-col overflow-hidden transition-all duration-300"
+        :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'"
+      >
+        <header
+          class="h-20 flex items-center justify-between bg-white border-b border-gray-200 px-6"
+        >
+          <button
+            @click="sidebarOpen = !sidebarOpen"
+            class="text-gray-600 hover:text-gray-800"
+          >
+            <svg
+              class="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+          <h2 class="text-xl font-semibold text-gray-800 hidden md:block">
+            System Settings
+          </h2>
+
+          <div class="flex items-center gap-3">
+            <div class="text-right hidden sm:block">
+              <div class="text-sm font-bold text-gray-800">Mr. Anderson</div>
+              <div
+                class="text-xs text-primary font-medium uppercase tracking-wider"
+              >
+                Super Admin
+              </div>
+            </div>
+            <div
+              class="h-10 w-10 rounded bg-slate-800 text-white flex items-center justify-center font-bold"
+            >
+              MA
+            </div>
+          </div>
+        </header>
+
+        <main
+          class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6"
+          x-data="systemSettings()"
+        >
+          <div class="max-w-7xl mx-auto">
+            <div
+              class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4"
+            >
+              <div
+                class="bg-white p-1 rounded-lg shadow-sm border border-gray-200 inline-flex w-full sm:w-auto"
+              >
+                <button
+                  @click="activeTab = 'general'"
+                  :class="activeTab === 'general' ? 'bg-primary text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  General
+                </button>
+                <button
+                  @click="activeTab = 'security'"
+                  :class="activeTab === 'security' ? 'bg-primary text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  Security & Backup
+                </button>
+                <button
+                  @click="activeTab = 'logs'"
+                  :class="activeTab === 'logs' ? 'bg-primary text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
+                  class="flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all"
+                >
+                  Audit Logs
+                </button>
+              </div>
+            </div>
+
+            <div x-show="activeTab === 'general'" x-cloak>
+              <div
+                class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+              >
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                  School Information
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >School Name</label
+                    >
+                    <input
+                      type="text"
+                      value="Springfield High School"
+                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Email Address</label
+                    >
+                    <input
+                      type="email"
+                      value="admin@springfieldhigh.edu"
+                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    />
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Address</label
+                    >
+                    <input
+                      type="text"
+                      value="123 Education Lane, Knowledge City"
+                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Phone</label
+                    >
+                    <input
+                      type="text"
+                      value="+1 (555) 012-3456"
+                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Academic Year</label
+                    >
+                    <select
+                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    >
+                      <option>2023-2024</option>
+                      <option>2024-2025</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mt-6 text-right">
+                  <button
+                    class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div x-show="activeTab === 'security'" x-cloak>
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div
+                  class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+                >
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    Database Backup
+                  </h3>
+                  <p class="text-sm text-gray-500 mb-4">
+                    Download a full backup of the school database. Recommended
+                    weekly.
+                  </p>
+                  <button
+                    class="flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+                  >
+                    <svg
+                      class="w-5 h-5 mr-2 text-gray-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                      />
+                    </svg>
+                    Download SQL Dump
+                  </button>
+                  <div class="mt-4 pt-4 border-t border-gray-100">
+                    <h4 class="text-sm font-medium text-gray-900 mb-2">
+                      Restore Database
+                    </h4>
+                    <div class="flex gap-2">
+                      <input
+                        type="file"
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                      />
+                      <button
+                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm"
+                      >
+                        Restore
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+                >
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    System Security
+                  </h3>
+                  <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                      <span class="text-sm text-gray-700"
+                        >Force Password Reset (All Users)</span
+                      >
+                      <button
+                        class="px-3 py-1 bg-white border border-gray-300 text-sm rounded shadow-sm hover:bg-gray-50"
+                      >
+                        Execute
+                      </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-sm text-gray-700"
+                        >Maintenance Mode</span
+                      >
+                      <button
+                        class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 bg-gray-200"
+                        role="switch"
+                        aria-checked="false"
+                      >
+                        <span
+                          aria-hidden="true"
+                          class="translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                        ></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div x-show="activeTab === 'logs'" x-cloak>
+              <div
+                class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+              >
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Action
+                      </th>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        User
+                      </th>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Role
+                      </th>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Date/Time
+                      </th>
+                      <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        IP Address
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                    <template x-for="log in auditLogs" :key="log.id">
+                      <tr class="hover:bg-gray-50">
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                          x-text="log.action"
+                        ></td>
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+                          x-text="log.user"
+                        ></td>
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                          x-text="log.role"
+                        ></td>
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                          x-text="log.date"
+                        ></td>
+                        <td
+                          class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono"
+                          x-text="log.ip"
+                        ></td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
