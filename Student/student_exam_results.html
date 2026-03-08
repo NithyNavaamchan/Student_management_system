@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -7,8 +7,6 @@
 
     <!-- Tailwind CSS Script -->
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-
-    <!-- REMOVED: Chart.js script -->
 
     <!-- Custom Tailwind Config -->
     <script>
@@ -914,13 +912,13 @@
             const displayResults = [...results].reverse();
 
             const labels = displayResults.map(
-              (r) => r.subject + " (" + r.examName.split(" ")[0] + ")"
+              (r) => r.subject + " (" + r.examName.split(" ")[0] + ")",
             );
             const studentScores = displayResults.map(
-              (r) => (r.score / r.totalPoints) * 100
+              (r) => (r.score / r.totalPoints) * 100,
             );
             const classAverages = displayResults.map(
-              (r) => (r.classAverage / r.totalPoints) * 100
+              (r) => (r.classAverage / r.totalPoints) * 100,
             );
 
             this.chartInstance = new Chart(ctx.getContext("2d"), {
@@ -1016,7 +1014,7 @@
             // Filter by Semester
             if (this.selectedSemester !== "All") {
               filtered = filtered.filter(
-                (result) => result.semester === this.selectedSemester
+                (result) => result.semester === this.selectedSemester,
               );
             }
 
@@ -1032,7 +1030,7 @@
             const totalScore = results.reduce((sum, r) => sum + r.score, 0);
             const totalPoints = results.reduce(
               (sum, r) => sum + r.totalPoints,
-              0
+              0,
             );
             const average =
               totalPoints > 0
@@ -1041,7 +1039,7 @@
 
             const totalGpaPoints = results.reduce(
               (sum, r) => sum + this.getGpaPoint(r.grade),
-              0
+              0,
             );
             const gpa = (totalGpaPoints / results.length).toFixed(2);
 
@@ -1051,7 +1049,7 @@
           // --- MODAL FUNCTIONS ---
           openModal(resultId) {
             const foundResult = this.formattedResults.find(
-              (r) => r.id === resultId
+              (r) => r.id === resultId,
             );
             if (foundResult) {
               this.selectedResult = foundResult;
